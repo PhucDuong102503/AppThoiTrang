@@ -16,6 +16,12 @@
         android:theme="@style/Theme.FashionShopApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.ChiTietActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.GioHangActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.PhuKienActivity"
             android:exported="false" />
         <activity
@@ -25,7 +31,7 @@
             android:name=".activity.QuanActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.AoActivity"
+            android:name=".activity.LoadMoreSpActivity"
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"

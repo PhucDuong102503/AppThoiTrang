@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?><androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- Hình ảnh sản phẩm -->
+        <ImageView
+            android:id="@+id/item_giohang_image"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background" /> <!-- Ảnh mặc định -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <!-- Tên sản phẩm -->
+            <TextView
+                android:id="@+id/item_giohang_tensp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên sản phẩm"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="@android:color/black"/>
+
+            <!-- Giá sản phẩm -->
+            <TextView
+                android:id="@+id/item_giohang_giasp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giá: 250,000đ"
+                android:textSize="14sp"
+                android:textColor="@color/red_200"
+                android:layout_marginTop="4dp"/>
+
+            <!-- Số lượng và các nút tăng/giảm (có thể thêm sau) -->
+            <TextView
+                android:id="@+id/item_giohang_soluong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Số lượng: 1"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Tổng tiền cho sản phẩm này -->
+            <TextView
+                android:id="@+id/item_giohang_tongtien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="Tổng: 250,000đ"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Nút xóa sản phẩm (có thể thêm sau) -->
+        <ImageView
+            android:id="@+id/item_giohang_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_delete"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            app:tint="@color/red_200" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -30,7 +30,6 @@ import com.example.fashionshopapp.adapter.LoaiSpAdapter;
 import com.example.fashionshopapp.adapter.SanPhamMoiAdapter;
 import com.example.fashionshopapp.model.Loaisp;
 import com.example.fashionshopapp.model.SanPhamMoi;
-import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.retrofit.ApiBanHang;
 import com.example.fashionshopapp.retrofit.RetrofitClient;
 //import com.example.fashionshopapp.util.server;
@@ -92,20 +91,23 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(trangchu);
                         break;
                     case 1:
-                        Intent ao = new Intent(getApplicationContext(), AoActivity.class);
+                        Intent ao = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
                         ao.putExtra("idloaisanpham", 2);
                         startActivity(ao);
                         break;
                     case 2:
-                        Intent quan = new Intent(getApplicationContext(), QuanActivity.class);
+                        Intent quan = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                        quan.putExtra("idloaisanpham", 3);
                         startActivity(quan);
                         break;
                     case 3:
-                        Intent giay = new Intent(getApplicationContext(), GiayActivity.class);
+                        Intent giay = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                        giay.putExtra("idloaisanpham", 4);
                         startActivity(giay);
                         break;
                     case 4:
-                        Intent phukien = new Intent(getApplicationContext(), PhuKienActivity.class);
+                        Intent phukien = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                        phukien.putExtra("idloaisanpham", 5);
                         startActivity(phukien);
                         break;
                 }
@@ -213,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
         mangloaisp = new ArrayList<>();
 
         mangSpMoi = new ArrayList<>();
+
 
     }
 

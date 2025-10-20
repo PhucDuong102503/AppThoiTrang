@@ -7,10 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activity.AoActivity">
+    tools:context=".activity.LoadMoreSpActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toobar"
-        app:title="Áo"
+        app:title="Sản Phẩm"
         android:background="#FF5722"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"

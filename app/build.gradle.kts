@@ -54,4 +54,18 @@ dependencies {
     //glider
     implementation("com.github.bumptech.glide:glide:5.0.5")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
+    // Định nghĩa phiên bản Room để dễ quản lý (dùng 'val' thay cho 'def')
+    val room_version = "2.6.1"
+
+    // Thư viện chính của Room
+    implementation("androidx.room:room-runtime:$room_version")
+
+    // 'ksp' hoặc 'annotationProcessor' phải ở dòng riêng. 'ksp' được khuyến nghị hơn.
+    // Nếu bạn dùng Java, annotationProcessor là được.
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // Thêm thư viện hỗ trợ RxJava3 (vì project của bạn đang dùng)
+    implementation("androidx.room:room-rxjava3:$room_version")
+
 }
