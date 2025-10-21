@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FashionShopApp</string>
+    <string name="gi_250000">Giá: đ250000</string>
+    <string name="th_m_v_o_gi_h_ng">Thêm vào giỏ</string>
 </resources>

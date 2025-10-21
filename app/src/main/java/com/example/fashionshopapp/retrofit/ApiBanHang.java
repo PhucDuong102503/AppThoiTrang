@@ -2,6 +2,7 @@ package com.example.fashionshopapp.retrofit;
 
 import com.example.fashionshopapp.model.LoaiSpModel;
 import com.example.fashionshopapp.model.SanPhamMoiModel;
+import com.example.fashionshopapp.model.SanPhamSizeModel;
 
 
 import io.reactivex.rxjava3.core.Observable;
@@ -21,7 +22,12 @@ public interface ApiBanHang {
     @FormUrlEncoded
     Observable<SanPhamMoiModel> getSanPham(
         @Field("page") int page,
-        @Field("idloaisanpham") int idloaisanpham
+        @Field("idloaisanpham") int idloaisanpham);
+
+    @FormUrlEncoded
+    @POST("getSanPhamSize.php")
+    Observable<SanPhamSizeModel> getSanPhamSize(
+            @Field("sanpham_id") int sanpham_id
     );
 }
 

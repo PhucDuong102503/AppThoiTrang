@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -49,7 +50,18 @@
                 android:textColor="@color/red_200"
                 android:layout_marginTop="4dp"/>
 
-            <!-- Số lượng và các nút tăng/giảm (có thể thêm sau) -->
+            <!-- =================== THÊM VÀO ĐÂY =================== -->
+            <!-- Size sản phẩm -->
+            <TextView
+                android:id="@+id/itemgiohangsize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Size: M"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
+            <!-- ===================================================== -->
+
+            <!-- Số lượng -->
             <TextView
                 android:id="@+id/item_giohang_soluong"
                 android:layout_width="wrap_content"
@@ -58,7 +70,7 @@
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
-            <!-- Tổng tiền cho sản phẩm này -->
+            <!-- Tổng tiền cho sản phẩm này (có thể bỏ đi để giao diện gọn hơn) -->
             <TextView
                 android:id="@+id/item_giohang_tongtien"
                 android:layout_width="wrap_content"
@@ -72,7 +84,7 @@
 
         </LinearLayout>
 
-        <!-- Nút xóa sản phẩm (có thể thêm sau) -->
+        <!-- Nút xóa sản phẩm -->
         <ImageView
             android:id="@+id/item_giohang_delete"
             android:layout_width="wrap_content"

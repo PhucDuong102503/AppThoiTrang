@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fashionshopapp.R;
-import com.example.fashionshopapp.adapter.AoAdapter;
+import com.example.fashionshopapp.adapter.LoadMoreSpAdapter;
 import com.example.fashionshopapp.model.SanPhamMoi;
 import com.example.fashionshopapp.retrofit.ApiBanHang;
 import com.example.fashionshopapp.retrofit.RetrofitClient;
@@ -33,7 +33,7 @@ public class LoadMoreSpActivity extends AppCompatActivity {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     int page = 1;
     int idloaisanpham;
-    AoAdapter adapterAo;
+    LoadMoreSpAdapter adapterAo;
     List<SanPhamMoi> sanPhamMoiList;
     LinearLayoutManager linearLayoutManager;
     Handler handler = new Handler();
@@ -123,7 +123,7 @@ public class LoadMoreSpActivity extends AppCompatActivity {
                                 if (result != null && result.size() > 0) {
                                     if (adapterAo == null) {
                                         sanPhamMoiList = result;
-                                        adapterAo = new AoAdapter(getApplicationContext(), sanPhamMoiList);
+                                        adapterAo = new LoadMoreSpAdapter(getApplicationContext(), sanPhamMoiList);
                                         recyclerView.setAdapter(adapterAo);
                                     } else {
                                         // Vị trí bắt đầu thêm dữ liệu mới
@@ -160,7 +160,6 @@ public class LoadMoreSpActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 
     private void AnhXa() {

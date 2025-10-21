@@ -21,13 +21,13 @@ import com.example.fashionshopapp.model.SanPhamMoi;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class AoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class LoadMoreSpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context context;
     List<SanPhamMoi> array;
     private static final int VIEW_TYPE_DATA = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public AoAdapter(Context context, List<SanPhamMoi> array) {
+    public LoadMoreSpAdapter(Context context, List<SanPhamMoi> array) {
         this.context = context;
         this.array = array;
     }
@@ -61,6 +61,7 @@ public class AoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     if(!isLongClick){
                         //click
                         Intent intent = new Intent(context, ChiTietActivity.class);
+                        intent.putExtra("chitiet", sanPham);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }

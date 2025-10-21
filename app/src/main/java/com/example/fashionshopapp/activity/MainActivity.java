@@ -8,12 +8,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import android.widget.Toast;
@@ -45,6 +49,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+
     Toolbar toolbar;
     ViewFlipper viewFlipper;
     RecyclerView recyclerViewmanhinhchinh;
@@ -69,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (isConnected(this)) {
-            
+
             Toast.makeText(this, "success", Toast.LENGTH_SHORT).show();
             ActionViewFlipper();
             getLoaiSanPham();
             getSpMoi();
             getEventClick();
-            
+
         } else {
             Toast.makeText(getApplicationContext(), "Không có kết nối mạng", Toast.LENGTH_SHORT).show();
         }
@@ -223,5 +228,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         compositeDisposable.clear();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Hàm này được gọi để tạo menu trên Toolbar.
+        // Nó sẽ đọc file menu_main.xml và hiển thị các item trong đó.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Hàm này được gọi khi người dùng nhấn vào một item trong menu.
+        if (item.getItemId() == R.id.menu_giohang) {
+            // Nếu item được nhấn là giỏ hàng
+            Intent intent = new Intent(getApplicationContext(), GioHangActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

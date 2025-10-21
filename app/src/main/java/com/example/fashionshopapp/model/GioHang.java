@@ -1,22 +1,25 @@
 package com.example.fashionshopapp.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+// @Entity đánh dấu đây là một bảng trong database.
+// tableName là tên của bảng.
+@Entity(tableName = "giohang")
 public class GioHang {
-    int id;
-    String tensanpham;
-    long giasanpham;
-    String hinhanhsanpham;
-    int soluong;
 
-    public GioHang() {
-    }
+    // @PrimaryKey đánh dấu đây là cột khóa chính.
+    @PrimaryKey
+    private int id; // ID này sẽ là sự kết hợp của id sản phẩm và id size.
 
-    public GioHang(int id, String tensanpham, long giasanpham, String hinhanhsanpham, int soluong) {
-        this.id = id;
-        this.tensanpham = tensanpham;
-        this.giasanpham = giasanpham;
-        this.hinhanhsanpham = hinhanhsanpham;
-        this.soluong = soluong;
-    }
+    private String tensp;
+    private long giasp;
+    private String hinhanh;
+    private int soluong; // Số lượng người dùng muốn mua
+    private String size;   // Size người dùng đã chọn (ví dụ: "M")
+
+    // --- BẮT BUỘC PHẢI CÓ GETTER VÀ SETTER CHO TẤT CẢ CÁC TRƯỜNG ---
 
     public int getId() {
         return id;
@@ -26,28 +29,28 @@ public class GioHang {
         this.id = id;
     }
 
-    public String getTensanpham() {
-        return tensanpham;
+    public String getTensp() {
+        return tensp;
     }
 
-    public void setTensanpham(String tensanpham) {
-        this.tensanpham = tensanpham;
+    public void setTensp(String tensp) {
+        this.tensp = tensp;
     }
 
-    public long getGiasanpham() {
-        return giasanpham;
+    public long getGiasp() {
+        return giasp;
     }
 
-    public void setGiasanpham(long giasanpham) {
-        this.giasanpham = giasanpham;
+    public void setGiasp(long giasp) {
+        this.giasp = giasp;
     }
 
-    public String getHinhanhsanpham() {
-        return hinhanhsanpham;
+    public String getHinhanh() {
+        return hinhanh;
     }
 
-    public void setHinhanhsanpham(String hinhanhsanpham) {
-        this.hinhanhsanpham = hinhanhsanpham;
+    public void setHinhanh(String hinhanh) {
+        this.hinhanh = hinhanh;
     }
 
     public int getSoluong() {
@@ -56,5 +59,13 @@ public class GioHang {
 
     public void setSoluong(int soluong) {
         this.soluong = soluong;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }
