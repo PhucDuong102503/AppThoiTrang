@@ -11,6 +11,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toobar"
         app:title="Sản Phẩm"
+        app:titleTextColor="@color/white"
         android:background="#FF5722"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"

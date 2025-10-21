@@ -29,6 +29,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fashionshopapp.Interface.ItemClickListener;
 import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.adapter.LoaiSpAdapter;
 import com.example.fashionshopapp.adapter.SanPhamMoiAdapter;
@@ -48,7 +49,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ItemClickListener {
 
     Toolbar toolbar;
     ViewFlipper viewFlipper;
@@ -86,6 +87,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onClick(View view, int pos, boolean isLongClick) {
+        if (!isLongClick) {
+            // Lấy ra sản phẩm đã được click
+            SanPhamMoi sanPhamDaClick = mangSpMoi.get(pos);
+
+            // Tạo Intent để chuyển sang màn hình chi tiết
+            Intent intent = new Intent(MainActivity.this, ChiTietActivity.class);
+
+            // Đính kèm dữ liệu của sản phẩm đó vào Intent
+            intent.putExtra("chitiet", sanPhamDaClick);
+
+            // Bắt đầu chuyển màn hình
+            startActivity(intent);
+        }
+    }
+
+
     private void getEventClick() {
         listViewManHinhChinh.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -120,25 +139,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getSpMoi() {
-        compositeDisposable.add(apiBanHang.getSpMoi()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        sanPhamMoiModel -> {
-                            if(sanPhamMoiModel.isSuccess()){
-                                //khoi tao adapter
-                                mangSpMoi = sanPhamMoiModel.getResult();
-                                spMoiAdapter = new SanPhamMoiAdapter(getApplicationContext(), mangSpMoi);
-                                recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
-                                spMoiAdapter.notifyDataSetChanged();
-                            }
-                        },
-                        throwable -> {
-                            Toast.makeText(getApplicationContext(), "Khong ket noi duoc server" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+    private void getSpMoi() {    compositeDisposable.add(apiBanHang.getSpMoi()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                    sanPhamMoiModel -> {
+                        if(sanPhamMoiModel.isSuccess()){
+                            mangSpMoi = sanPhamMoiModel.getResult();
+                            // SỬA DÒNG NÀY: Truyền `this` (chính là MainActivity) vào làm listener
+                            spMoiAdapter = new SanPhamMoiAdapter(getApplicationContext(), mangSpMoi, this);
+                            recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
+                            // Dòng notifyDataSetChanged() không cần thiết khi set adapter lần đầu
                         }
-                ));
+                    },
+                    throwable -> {
+                        Toast.makeText(getApplicationContext(), "Khong ket noi duoc server" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+            ));
     }
+
 
     private void getLoaiSanPham() {
         compositeDisposable.add(apiBanHang.getLoaiSp()
@@ -213,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerViewmanhinhchinh.setLayoutManager(layoutManager);
         recyclerViewmanhinhchinh.setHasFixedSize(true);
+        recyclerViewmanhinhchinh.setNestedScrollingEnabled(false);
         navigationView = findViewById(R.id.navigationview);
         listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
         drawerLayout = findViewById(R.id.drawerlayout);

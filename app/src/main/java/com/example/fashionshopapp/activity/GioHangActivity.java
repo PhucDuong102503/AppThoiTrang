@@ -113,26 +113,51 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
     // HÀM XỬ LÝ SỰ KIỆN XÓA (PHIÊN BẢN TÁI CẤU TRÚC)
     @Override
     public void onItemClick(View view, int pos, int typeClick) {
-        if (typeClick == 3) {
-            if (pos >= 0 && pos < gioHangList.size()) {
-                GioHang gioHangCanXoa = gioHangList.get(pos);
+        if (pos < 0 || pos >= gioHangList.size()) return;
 
-                compositeDisposable.add(appDatabase.gioHangDAO().deleteById(gioHangCanXoa.getId())
+        GioHang gioHang = gioHangList.get(pos);
+
+        switch (typeClick) {
+            case 1: // ➕ Tăng
+                gioHang.setSoluong(gioHang.getSoluong() + 1);
+                break;
+
+            case 2: // ➖ Giảm
+                if (gioHang.getSoluong() > 1) {
+                    gioHang.setSoluong(gioHang.getSoluong() - 1);
+                } else {
+                    Toast.makeText(this, "Số lượng tối thiểu là 1", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                break;
+
+            case 3: // ❌ Xóa
+                compositeDisposable.add(appDatabase.gioHangDAO().deleteById(gioHang.getId())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 () -> {
-                                    // << THAY ĐỔI CỐT LÕI >>
-                                    // Xóa thành công trong DB, không tự sửa UI nữa.
-                                    // Thay vào đó, gọi lại hàm tải dữ liệu để đồng bộ lại từ đầu.
                                     loadDataFromDatabase();
                                     Toast.makeText(this, "Đã xóa sản phẩm", Toast.LENGTH_SHORT).show();
                                 },
                                 throwable -> Toast.makeText(this, "Lỗi khi xóa: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
                         ));
-            }
+                return; // Dừng ở đây, không tiếp tục xuống phần cập nhật
         }
+
+        // 🟩 Cập nhật lại trong DB (Room)
+        compositeDisposable.add(appDatabase.gioHangDAO().insertOrReplace(gioHang)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            gioHangAdapter.notifyItemChanged(pos);
+                            calculateTotalPrice(); // Cập nhật tổng tiền toàn giỏ
+                        },
+                        throwable -> Toast.makeText(this, "Lỗi khi cập nhật: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
+                ));
     }
+
 
     @Override
     protected void onDestroy() {

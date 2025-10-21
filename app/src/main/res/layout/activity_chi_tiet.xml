@@ -16,6 +16,7 @@
         android:layout_marginTop="20dp"
         android:background="#FF5722"
         app:title="Chi tiết sản phẩm"
+        app:titleTextColor="@color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- ScrollView chứa toàn bộ phần nội dung chi tiết -->

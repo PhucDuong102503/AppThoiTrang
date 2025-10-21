@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
     List<GioHang> gioHangList;
     private GioHangItemClickListener itemClickListener;
 
+
     public GioHangAdapter(Context context, List<GioHang> gioHangList, GioHangItemClickListener itemClickListener) {
         this.context = context;
         this.gioHangList = gioHangList;
@@ -40,48 +42,46 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        // << 1. LẤY SẢN PHẨM MỘT CÁCH AN TOÀN >>
-        // Sử dụng holder.getAdapterPosition() để đảm bảo lấy đúng vị trí ngay cả khi có thay đổi
         final int currentPosition = holder.getAdapterPosition();
-        // Kiểm tra để tránh lỗi "No position" khi RecyclerView đang cập nhật
         if (currentPosition == RecyclerView.NO_POSITION) {
             return;
         }
         GioHang gioHang = gioHangList.get(currentPosition);
 
-        // Gán dữ liệu lên các View
         holder.txtTenSp.setText(gioHang.getTensp());
-        holder.txtSoLuong.setText("Số lượng: " + gioHang.getSoluong());
+        holder.txtSoLuong.setText(String.valueOf(gioHang.getSoluong()));
 
-        // << 2. LOGIC ẨN/HIỆN SIZE ĐÃ ĐƯỢC THÊM VÀO >>
-        // Kiểm tra xem sản phẩm này có thông tin size hay không
         if (gioHang.getSize() != null && !gioHang.getSize().isEmpty()) {
-            // Nếu CÓ size (size không phải null và không phải chuỗi rỗng)
             holder.txtSize.setText("Size: " + gioHang.getSize());
-            holder.txtSize.setVisibility(View.VISIBLE); // Hiện TextView lên
+            holder.txtSize.setVisibility(View.VISIBLE);
         } else {
-            // Nếu KHÔNG có size (là phụ kiện)
-            holder.txtSize.setVisibility(View.GONE); // Ẩn TextView đi
+            holder.txtSize.setVisibility(View.GONE);
         }
 
-        // Định dạng giá tiền cho dễ đọc
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         holder.txtGiaSp.setText("Giá: " + decimalFormat.format(gioHang.getGiasp()) + "đ");
 
-        // Tính tổng tiền cho từng item
         long tongTien = gioHang.getGiasp() * gioHang.getSoluong();
         holder.txtTongTien.setText("Tổng: " + decimalFormat.format(tongTien) + "đ");
 
-        // Tải hình ảnh sản phẩm bằng Glide
         Glide.with(context).load(gioHang.getHinhanh()).into(holder.imgAnh);
 
-        // Gán sự kiện click cho nút xóa
-        holder.imgXoa.setOnClickListener(v -> {
-            // << 3. TRUYỀN VỊ TRÍ AN TOÀN KHI CLICK >>
-            // Gọi đến hàm onItemClick và truyền vào vị trí chính xác tại thời điểm click
-            itemClickListener.onItemClick(v, currentPosition, 3); // 3 là mã quy ước cho sự kiện xóa
-        });
+        // 🟩 Nút xóa sản phẩm
+        holder.imgXoa.setOnClickListener(v ->
+                itemClickListener.onItemClick(v, currentPosition, 3)
+        );
+
+        // 🟩 Nút tăng số lượng
+        holder.btnCong.setOnClickListener(v ->
+                itemClickListener.onItemClick(v, currentPosition, 1) // 1 = tăng
+        );
+
+        // 🟩 Nút giảm số lượng
+        holder.btnTru.setOnClickListener(v ->
+                itemClickListener.onItemClick(v, currentPosition, 2) // 2 = giảm
+        );
     }
+
 
     @Override
     public int getItemCount() {
@@ -96,6 +96,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAnh, imgXoa;
         TextView txtTenSp, txtGiaSp, txtSoLuong, txtSize, txtTongTien;
+        Button btnCong, btnTru;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -108,6 +109,9 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
             // Lưu ý: Đảm bảo ID này đúng với file item_giohang.xml của bạn
             txtSize = itemView.findViewById(R.id.itemgiohangsize);
             txtTongTien = itemView.findViewById(R.id.item_giohang_tongtien);
+            btnCong = itemView.findViewById(R.id.item_giohang_cong);
+            btnTru = itemView.findViewById(R.id.item_giohang_tru);
+
         }
     }
 }
