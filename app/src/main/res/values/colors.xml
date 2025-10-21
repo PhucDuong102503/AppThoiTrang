@@ -8,6 +8,8 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="red_200">#FFEF5350</color>
-    <color name="red_700">#FFB00020</color>
+    <color name="red_700">#FFB00020</color>FF5722
+    <color name="clolortext">#FF5722</color>
+    <color name="blue">#169EDC</color>
 
 </resources>
