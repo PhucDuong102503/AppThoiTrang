@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".activity.DangKiActivity">
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".activity.DangKiActivity">
 
     <!-- Logo -->
@@ -19,19 +28,6 @@
         android:layout_marginTop="40dp"
         android:contentDescription="Logo của shop" />
 
-    <!-- Tên shop -->
-    <TextView
-        android:id="@+id/txtTenShop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/clolortext"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@id/imgLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="0dp" />
 
     <!-- Tiêu đề Đăng ký -->
     <TextView
@@ -43,8 +39,8 @@
         android:textColor="@color/clolortext"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/txtTenShop" />
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@id/imgLogo"/>
 
     <!-- Ô Họ và tên -->
     <com.google.android.material.textfield.TextInputLayout
@@ -56,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@id/txtDangKi">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtHoten"
+            android:id="@+id/hoten"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/id_card"
@@ -67,9 +63,9 @@
             android:inputType="textPersonName" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Ô Email -->
+    <!-- Ô User Name -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/lineEmail"
+        android:id="@+id/lineUserName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,7 +73,29 @@
         app:layout_constraintTop_toBottomOf="@id/lineHoten">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtEmail"
+            android:id="@+id/usernamedk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/user"
+            android:drawablePadding="5dp"
+            android:hint="User Name"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:inputType="textPersonName" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- Ô Email -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lineEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/lineUserName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/gmail_1"
@@ -98,7 +116,7 @@
         app:layout_constraintTop_toBottomOf="@id/lineEmail">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtSdt"
+            android:id="@+id/sodienthoai"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/address_book"
@@ -119,7 +137,7 @@
         app:layout_constraintTop_toBottomOf="@id/lineSdt">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtDiachi"
+            android:id="@+id/diachi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/location"
@@ -140,7 +158,7 @@
         app:layout_constraintTop_toBottomOf="@id/lineDiachi">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtPass"
+            android:id="@+id/passdk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/key"
@@ -161,7 +179,7 @@
         app:layout_constraintTop_toBottomOf="@id/linePass">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtRePass"
+            android:id="@+id/repass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/key"
@@ -174,13 +192,13 @@
 
     <!-- Nút Đăng ký -->
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnDangKi"
+        android:id="@+id/btndangki"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dp"
-        android:background="#F06229"
+        android:background="@drawable/background_button"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
         android:text="Đăng Kí"
@@ -196,7 +214,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/btnDangKi">
+        app:layout_constraintTop_toBottomOf="@id/btndangki">
 
         <TextView
             android:text="Bạn đã có tài khoản?"
@@ -205,7 +223,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/txtDangNhap"
+            android:id="@+id/txtdangnhap"
             android:layout_marginLeft="5dp"
             android:text="Đăng nhập"
             android:textStyle="bold"
@@ -216,3 +234,4 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

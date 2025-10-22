@@ -40,7 +40,7 @@
                     android:layout_height="200dp" />
 
             <LinearLayout
-                android:background="#E5FF5722"
+                android:background="#E5F6825C"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

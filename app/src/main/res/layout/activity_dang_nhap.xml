@@ -55,14 +55,15 @@
         android:layout_marginTop="10dp">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:drawableLeft="@drawable/gmail_1"
+            android:drawableLeft="@drawable/user"
             android:drawablePadding="5dp"
-            android:hint="Email"
-            android:inputType="textEmailAddress"/>
+            android:hint="User name"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Ô Password -->
@@ -75,6 +76,7 @@
         android:layout_marginTop="5dp">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/pass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -87,7 +89,7 @@
 
     <!-- Nút Đăng nhập -->
     <androidx.appcompat.widget.AppCompatButton
-        android:background="#F06229"
+        android:background="@drawable/background_button"
         android:id="@+id/btndangnhap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -116,6 +118,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/txtdangki"
             android:layout_marginLeft="5dp"
             android:text="Đăng kí"
             android:textStyle="bold"
