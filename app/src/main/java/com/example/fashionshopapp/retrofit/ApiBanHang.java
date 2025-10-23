@@ -5,11 +5,13 @@ import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.model.SanPhamSizeModel;
 import com.example.fashionshopapp.model.UserModel;
 
-
 import io.reactivex.rxjava3.core.Observable;
+import okhttp3.RequestBody;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface ApiBanHang {
@@ -22,29 +24,47 @@ public interface ApiBanHang {
     @POST("getsanpham.php")
     @FormUrlEncoded
     Observable<SanPhamMoiModel> getSanPham(
-        @Field("page") int page,
-        @Field("idloaisanpham") int idloaisanpham);
+            @Field("page") int page,
+            @Field("idloaisanpham") int idloaisanpham);
 
-    @FormUrlEncoded
     @POST("getSanPhamSize.php")
-    Observable<SanPhamSizeModel> getSanPhamSize(
-            @Field("sanpham_id") int sanpham_id
-    );
-
-    @POST("dangki.php")
     @FormUrlEncoded
-    Observable<UserModel> dangki(
-            @Field("tendangnhap") String tendangnhap,
-            @Field("hoten") String hoten,
-            @Field("matkhau") String matkhau,
-            @Field("sodienthoai") String sodienthoai,
-            @Field("email") String email,
-            @Field("diachi") String diachi);
+    Observable<SanPhamSizeModel> getSanPhamSize(@Field("sanpham_id") int sanpham_id);
 
+    // --- API ĐĂNG NHẬP ---
     @POST("dangnhap.php")
     @FormUrlEncoded
     Observable<UserModel> dangNhap(
             @Field("tendangnhap") String tendangnhap,
-            @Field("matkhau") String matkhau);
-}
+            @Field("matkhau") String matkhau
+    );
 
+    // --- API LUỒNG QUÊN MẬT KHẨU (DÙNG JSON) ---
+    @Headers("Content-Type: application/json")
+    @POST("forgot_password.php")
+    Observable<UserModel> sendResetPasswordOtp(@Body RequestBody body); // <<< HÀM ĐÚNG LÀ HÀM NÀY
+
+    @Headers("Content-Type: application/json")
+    @POST("reset_password.php")
+    Observable<UserModel> verifyAndResetPassword(@Body RequestBody body);
+
+    // --- API LUỒNG ĐĂNG KÝ BẰNG OTP (DÙNG FORMenCODED) ---
+    @POST("send_register_otp.php")
+    @FormUrlEncoded
+    Observable<UserModel> sendRegisterOtp(
+            @Field("email") String email,
+            @Field("tendangnhap") String username
+    );
+
+    @POST("dangki_final.php")
+    @FormUrlEncoded
+    Observable<UserModel> dangKiFinal(
+            @Field("hoten") String hoten,
+            @Field("tendangnhap") String username,
+            @Field("email") String email,
+            @Field("sodienthoai") String sdt,
+            @Field("diachi") String diachi,
+            @Field("matkhau") String password,
+            @Field("otp") String otp
+    );
+}

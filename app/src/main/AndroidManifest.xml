@@ -16,8 +16,14 @@
         android:theme="@style/Theme.FashionShopApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.OtpVerifyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ResetPassActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.DangNhapActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,9 +44,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>

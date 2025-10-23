@@ -3,7 +3,7 @@ package com.example.fashionshopapp.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;import android.widget.EditText;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,109 +22,88 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class DangKiActivity extends AppCompatActivity {
 
     TextView txtdangnhap;
-    EditText hoten, email, sodienthoai, diachi, pass, repass, username;
-    AppCompatButton button;
+    EditText hoten, usernamedk, email, sodienthoai, diachi, passdk, repass;
+    AppCompatButton btndangki;
     ApiBanHang apiBanHang;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Tạm thời vô hiệu hóa EdgeToEdge để tránh xung đột layout
-        // EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dang_ki);
-        initview();
-        initControll();
+        initView();
+        initControl();
     }
 
-    private void initControll() {
-        txtdangnhap.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), DangNhapActivity.class);
-                startActivity(intent);
-                finish(); // << SỬA 1: Thêm finish()
-            }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dangKi();
-            }
+    private void initControl() {
+        btndangki.setOnClickListener(view -> handleRegisterClick());
+        txtdangnhap.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), DangNhapActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 
-    private void dangKi() {
-        String str_username = username.getText().toString().trim();
+    private void handleRegisterClick() {
         String str_hoten = hoten.getText().toString().trim();
+        String str_user = usernamedk.getText().toString().trim();
         String str_email = email.getText().toString().trim();
-        String str_sodienthoai = sodienthoai.getText().toString().trim();
+        String str_sdt = sodienthoai.getText().toString().trim();
         String str_diachi = diachi.getText().toString().trim();
-        String str_pass = pass.getText().toString().trim();
+        String str_pass = passdk.getText().toString().trim();
         String str_repass = repass.getText().toString().trim();
 
-        if(TextUtils.isEmpty(str_hoten)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập họ tên", Toast.LENGTH_SHORT).show();
-        } else if(TextUtils.isEmpty(str_email)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập email", Toast.LENGTH_SHORT).show();
-        } else if(TextUtils.isEmpty(str_sodienthoai)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập số điện thoại", Toast.LENGTH_SHORT).show();
-        } else if(TextUtils.isEmpty(str_diachi)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập địa chỉ", Toast.LENGTH_SHORT).show();
-        } else if(TextUtils.isEmpty(str_pass)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập mật khẩu", Toast.LENGTH_SHORT).show();
-        } else if(TextUtils.isEmpty(str_repass)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập lại mật khẩu", Toast.LENGTH_SHORT).show();
-        } else if(TextUtils.isEmpty(str_username)){
-            Toast.makeText(getApplicationContext(), "Bạn chưa nhập user name", Toast.LENGTH_SHORT).show();
-        } else {
-            if(str_pass.equals(str_repass)){
-                //post data
-                compositeDisposable.add(apiBanHang.dangki(str_username, str_hoten, str_pass, str_sodienthoai, str_email, str_diachi)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                userModel -> {
-                                    if(userModel.isSuccess()){
-                                        // << SỬA 2: Đảm bảo lưu đúng username và pass >>
-                                        Utils.user_current.setTendangnhap(str_username);
-                                        Utils.user_current.setMatkhau(str_pass);
-
-                                        Toast.makeText(getApplicationContext(), "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(), DangNhapActivity.class);
-                                        startActivity(intent);
-                                        finish(); // << SỬA 3: Thêm finish()
-                                    } else{
-                                        Toast.makeText(getApplicationContext(), userModel.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-
-                                },
-                                throwable -> {
-                                    Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                        ));
-            } else{
-                Toast.makeText(getApplicationContext(), "Mật khẩu nhập lại không khớp", Toast.LENGTH_SHORT).show();
-            }
+        if (TextUtils.isEmpty(str_hoten) || TextUtils.isEmpty(str_user) || TextUtils.isEmpty(str_email) || TextUtils.isEmpty(str_pass)) {
+            Toast.makeText(getApplicationContext(), "Vui lòng điền đủ thông tin bắt buộc", Toast.LENGTH_SHORT).show();
+            return;
         }
 
+        if (!str_pass.equals(str_repass)) {
+            Toast.makeText(getApplicationContext(), "Mật khẩu nhập lại không khớp", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        btndangki.setEnabled(false);
+        compositeDisposable.add(apiBanHang.sendRegisterOtp(str_email, str_user)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        userModel -> {
+                            btndangki.setEnabled(true);
+                            if (userModel.isSuccess()) {
+                                Toast.makeText(getApplicationContext(), userModel.getMessage(), Toast.LENGTH_LONG).show();
+
+                                Intent intent = new Intent(getApplicationContext(), OtpVerifyActivity.class);
+                                intent.putExtra("flow_type", "register");
+                                intent.putExtra("hoten", str_hoten);
+                                intent.putExtra("username", str_user);
+                                intent.putExtra("email", str_email);
+                                intent.putExtra("sdt", str_sdt);
+                                intent.putExtra("diachi", str_diachi);
+                                intent.putExtra("password", str_pass);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getApplicationContext(), userModel.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        },
+                        throwable -> {
+                            btndangki.setEnabled(true);
+                            Toast.makeText(getApplicationContext(), "Lỗi kết nối: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                ));
     }
 
-    private void initview() {
-        txtdangnhap = findViewById(R.id.txtdangnhap);
+    private void initView() {
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
-
+        txtdangnhap = findViewById(R.id.txtdangnhap);
         hoten = findViewById(R.id.hoten);
         email = findViewById(R.id.email);
         sodienthoai = findViewById(R.id.sodienthoai);
         diachi = findViewById(R.id.diachi);
-        pass = findViewById(R.id.passdk);
+        passdk = findViewById(R.id.passdk);
         repass = findViewById(R.id.repass);
-        username = findViewById(R.id.usernamedk);
-        button = findViewById(R.id.btndangki);
+        usernamedk = findViewById(R.id.usernamedk);
+        btndangki = findViewById(R.id.btndangki);
     }
 
     @Override
