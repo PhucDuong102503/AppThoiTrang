@@ -1,5 +1,6 @@
 package com.example.fashionshopapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,7 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
     GioHangAdapter gioHangAdapter;
     List<GioHang> gioHangList = new ArrayList<>();
     CompositeDisposable compositeDisposable = new CompositeDisposable();
+    long tongTien; // Biến để lưu tổng tiền cho Intent
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +82,8 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
 
     // Tính tổng tiền
     private void calculateTotalPrice() {
-        long tongTien = 0;
+        // Biến tongTien đã được khai báo ở trên cùng
+        tongTien = 0;
         for (GioHang item : gioHangList) {
             tongTien += (item.getGiasp() * item.getSoluong());
         }
@@ -97,6 +100,19 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         toolbar.setNavigationOnClickListener(v -> finish());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(gioHangAdapter);
+        btnMuaHang.setOnClickListener(v -> {
+            // gioHangList là danh sách sản phẩm hiện tại trong giỏ
+            if (gioHangList.isEmpty()) {
+                // Nếu không có sản phẩm, thông báo cho người dùng
+                Toast.makeText(getApplicationContext(), "Giỏ hàng của bạn đang trống, không thể thanh toán", Toast.LENGTH_SHORT).show();
+            } else {
+                // Nếu có sản phẩm, chuyển sang màn hình ThanhToanActivity
+                Intent intent = new Intent(getApplicationContext(), ThanhToanActivity.class);
+                // Truyền tổng số tiền sang màn hình thanh toán để hiển thị
+                intent.putExtra("tongtien", tongTien);
+                startActivity(intent);
+            }
+        });
     }
 
     // Ánh xạ View
@@ -110,54 +126,82 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         gioHangAdapter = new GioHangAdapter(this, gioHangList, this);
     }
 
-    // HÀM XỬ LÝ SỰ KIỆN XÓA (PHIÊN BẢN TÁI CẤU TRÚC)
+
+    // HÀM XỬ LÝ SỰ KIỆN TĂNG/GIẢM/XÓA
     @Override
     public void onItemClick(View view, int pos, int typeClick) {
         if (pos < 0 || pos >= gioHangList.size()) return;
 
-        GioHang gioHang = gioHangList.get(pos);
+        final GioHang gioHang = gioHangList.get(pos);
 
         switch (typeClick) {
-            case 1: // ➕ Tăng
-                gioHang.setSoluong(gioHang.getSoluong() + 1);
-                break;
-
-            case 2: // ➖ Giảm
+            case 1: // ➖ Giảm
                 if (gioHang.getSoluong() > 1) {
                     gioHang.setSoluong(gioHang.getSoluong() - 1);
+                    // Cập nhật lại sản phẩm đã thay đổi trong DB
+                    updateItemInDatabase(gioHang);
                 } else {
-                    Toast.makeText(this, "Số lượng tối thiểu là 1", Toast.LENGTH_SHORT).show();
-                    return;
+                    // Nếu số lượng là 1, giảm nữa sẽ là xóa
+                    deleteItemFromDatabase(gioHang);
                 }
                 break;
 
-            case 3: // ❌ Xóa
-                compositeDisposable.add(appDatabase.gioHangDAO().deleteById(gioHang.getId())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                () -> {
-                                    loadDataFromDatabase();
-                                    Toast.makeText(this, "Đã xóa sản phẩm", Toast.LENGTH_SHORT).show();
-                                },
-                                throwable -> Toast.makeText(this, "Lỗi khi xóa: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
-                        ));
-                return; // Dừng ở đây, không tiếp tục xuống phần cập nhật
-        }
+            case 2: // ➕ Tăng
+                gioHang.setSoluong(gioHang.getSoluong() + 1);
+                // Cập nhật lại sản phẩm đã thay đổi trong DB
+                updateItemInDatabase(gioHang);
+                break;
 
-        // 🟩 Cập nhật lại trong DB (Room)
+            case 3: // ❌ Xóa
+                // Gọi hàm xóa trực tiếp
+                deleteItemFromDatabase(gioHang);
+                break;
+        }
+    }
+
+    // HÀM MỚI: Cập nhật một item trong DB
+    private void updateItemInDatabase(GioHang gioHang) {
         compositeDisposable.add(appDatabase.gioHangDAO().insertOrReplace(gioHang)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
-                            gioHangAdapter.notifyItemChanged(pos);
-                            calculateTotalPrice(); // Cập nhật tổng tiền toàn giỏ
+                            // Sau khi cập nhật DB thành công...
+                            // 1. Tính lại tổng tiền
+                            calculateTotalPrice();
+                            // 2. THÊM DÒNG NÀY: Bắt buộc thông báo cho Adapter vẽ lại giao diện
+                            gioHangAdapter.notifyDataSetChanged();
                         },
                         throwable -> Toast.makeText(this, "Lỗi khi cập nhật: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
                 ));
     }
 
+    // HÀM MỚI: Xóa một item khỏi DB
+    private void deleteItemFromDatabase(GioHang gioHang) {
+        // THAY ĐỔI: Gọi hàm DAO mới deleteByPrimaryKey và truyền vào cả idsp và sizeId
+        compositeDisposable.add(appDatabase.gioHangDAO().deleteByPrimaryKey(gioHang.getIdsp(), gioHang.getSizeId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            // Sau khi xóa thành công trong DB...
+                            // 1. Tải lại toàn bộ dữ liệu từ DB để đảm bảo tính nhất quán
+                            loadDataFromDatabase();
+                            // 2. Thông báo cho người dùng
+                            Toast.makeText(this, "Đã xóa sản phẩm", Toast.LENGTH_SHORT).show();
+                            // Hàm loadDataFromDatabase() đã bao gồm cả việc tính lại tổng tiền và notifyDataSetChanged() nên không cần gọi lại ở đây.
+                        },
+                        throwable -> Toast.makeText(this, "Lỗi khi xóa: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
+                ));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Luôn tải lại dữ liệu mỗi khi quay lại màn hình này
+        // để đảm bảo dữ liệu luôn mới nhất sau khi xóa/cập nhật.
+        loadDataFromDatabase();
+    }
 
     @Override
     protected void onDestroy() {

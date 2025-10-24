@@ -23,13 +23,13 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
 
     Context context;
     List<GioHang> gioHangList;
-    private GioHangItemClickListener itemClickListener;
+    private GioHangItemClickListener listener; // Đổi tên cho nhất quán
 
 
     public GioHangAdapter(Context context, List<GioHang> gioHangList, GioHangItemClickListener itemClickListener) {
         this.context = context;
         this.gioHangList = gioHangList;
-        this.itemClickListener = itemClickListener;
+        this.listener = itemClickListener; // Sửa ở đây
     }
 
 
@@ -42,76 +42,70 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final int currentPosition = holder.getAdapterPosition();
-        if (currentPosition == RecyclerView.NO_POSITION) {
-            return;
-        }
-        GioHang gioHang = gioHangList.get(currentPosition);
+        GioHang gioHang = gioHangList.get(position);
 
+        // Hiển thị dữ liệu lên View
         holder.txtTenSp.setText(gioHang.getTensp());
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+        holder.txtGiaSp.setText("Giá: " + decimalFormat.format(gioHang.getGiasp()) + "đ");
         holder.txtSoLuong.setText(String.valueOf(gioHang.getSoluong()));
+        Glide.with(context).load(gioHang.getHinhanh()).into(holder.imgAnh);
 
-        if (gioHang.getSize() != null && !gioHang.getSize().isEmpty()) {
+        // Hiển thị Size (nếu có)
+        if (gioHang.getSize() != null && !gioHang.getSize().isEmpty() && !gioHang.getSize().equals("Phụ kiện")) {
             holder.txtSize.setText("Size: " + gioHang.getSize());
             holder.txtSize.setVisibility(View.VISIBLE);
         } else {
             holder.txtSize.setVisibility(View.GONE);
         }
 
-        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
-        holder.txtGiaSp.setText("Giá: " + decimalFormat.format(gioHang.getGiasp()) + "đ");
+        // --- SỬA LẠI TOÀN BỘ LOGIC GỌI SỰ KIỆN Ở ĐÂY CHO ĐÚNG VỚI TÊN BIẾN ---
 
-        long tongTien = gioHang.getGiasp() * gioHang.getSoluong();
-        holder.txtTongTien.setText("Tổng: " + decimalFormat.format(tongTien) + "đ");
+        // Nút trừ (btnTru) phải gửi đi mã 1 (Giảm)
+        holder.btnTru.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(v, holder.getAdapterPosition(), 1);
+            }
+        });
 
-        Glide.with(context).load(gioHang.getHinhanh()).into(holder.imgAnh);
+        // Nút cộng (btnCong) phải gửi đi mã 2 (Tăng)
+        holder.btnCong.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(v, holder.getAdapterPosition(), 2);
+            }
+        });
 
-        // 🟩 Nút xóa sản phẩm
-        holder.imgXoa.setOnClickListener(v ->
-                itemClickListener.onItemClick(v, currentPosition, 3)
-        );
-
-        // 🟩 Nút tăng số lượng
-        holder.btnCong.setOnClickListener(v ->
-                itemClickListener.onItemClick(v, currentPosition, 1) // 1 = tăng
-        );
-
-        // 🟩 Nút giảm số lượng
-        holder.btnTru.setOnClickListener(v ->
-                itemClickListener.onItemClick(v, currentPosition, 2) // 2 = giảm
-        );
+        // Nút xóa (imgXoa - thùng rác) gửi đi mã 3
+        holder.imgXoa.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(v, holder.getAdapterPosition(), 3);
+            }
+        });
     }
 
 
     @Override
     public int getItemCount() {
-        // Trả về số lượng sản phẩm trong giỏ hàng
         return gioHangList.size();
     }
 
-    /**
-     * Lớp ViewHolder để lưu trữ các tham chiếu đến View của một item.
-     * Giúp tăng hiệu năng bằng cách tránh gọi findViewById() nhiều lần.
-     */
+    // --- SỬA LẠI TÊN BIẾN TRONG MyViewHolder CHO ĐÚNG VỚI FILE LAYOUT CỦA BẠN ---
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAnh, imgXoa;
-        TextView txtTenSp, txtGiaSp, txtSoLuong, txtSize, txtTongTien;
+        TextView txtTenSp, txtGiaSp, txtSoLuong, txtSize; // Bỏ txtTongTien vì nó ở ngoài
         Button btnCong, btnTru;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             // Ánh xạ các View từ file layout item_giohang.xml
             imgAnh = itemView.findViewById(R.id.item_giohang_image);
-            imgXoa = itemView.findViewById(R.id.item_giohang_delete);
+            imgXoa = itemView.findViewById(R.id.item_giohang_delete); // Thùng rác để xóa
             txtTenSp = itemView.findViewById(R.id.item_giohang_tensp);
             txtGiaSp = itemView.findViewById(R.id.item_giohang_giasp);
             txtSoLuong = itemView.findViewById(R.id.item_giohang_soluong);
-            // Lưu ý: Đảm bảo ID này đúng với file item_giohang.xml của bạn
             txtSize = itemView.findViewById(R.id.itemgiohangsize);
-            txtTongTien = itemView.findViewById(R.id.item_giohang_tongtien);
-            btnCong = itemView.findViewById(R.id.item_giohang_cong);
-            btnTru = itemView.findViewById(R.id.item_giohang_tru);
-
+            btnCong = itemView.findViewById(R.id.item_giohang_cong); // Nút cộng
+            btnTru = itemView.findViewById(R.id.item_giohang_tru);   // Nút trừ
         }
     }
 }

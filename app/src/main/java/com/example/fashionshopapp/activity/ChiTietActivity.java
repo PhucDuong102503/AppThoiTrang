@@ -1,7 +1,7 @@
 package com.example.fashionshopapp.activity;
 
 import android.os.Bundle;
-import android.view.View; // << 1. ĐẢM BẢO ĐÃ IMPORT ĐÚNG LỚP NÀY
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,13 +19,11 @@ import com.example.fashionshopapp.model.AppDatabase;
 import com.example.fashionshopapp.model.GioHang;
 import com.example.fashionshopapp.model.SanPhamMoi;
 import com.example.fashionshopapp.model.SanPhamSize;
-import com.example.fashionshopapp.model.SanPhamSizeModel;
 import com.example.fashionshopapp.retrofit.ApiBanHang;
 import com.example.fashionshopapp.retrofit.RetrofitClient;
 import com.example.fashionshopapp.util.Utils;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -34,19 +32,18 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ChiTietActivity extends AppCompatActivity {
 
-    // 1. Khai báo View
     TextView txtTen, txtGia, txtMoTa;
     Button btnThemVaoGio;
     ImageView imgHinhAnh;
     Spinner spinnerSize, spinnerSoLuong;
     Toolbar toolbar;
+    LinearLayout layoutSizeSelection;
 
-    // 2. Khai báo các biến xử lý dữ liệu
     SanPhamMoi sanPhamMoi;
     AppDatabase appDatabase;
     ApiBanHang apiBanHang;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
-    LinearLayout layoutSizeSelection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +61,94 @@ public class ChiTietActivity extends AppCompatActivity {
         btnThemVaoGio.setOnClickListener(v -> themVaoGio());
     }
 
+    private void themVaoGio() {
+        if (sanPhamMoi.getIdloaisanpham() == 5) {
+            themPhuKienVaoGio();
+        } else {
+            themSanPhamCoSizeVaoGio();
+        }
+    }
+
+    private void themPhuKienVaoGio() {
+        final int soLuongMua = Integer.parseInt(spinnerSoLuong.getSelectedItem().toString());
+        final int sanPhamIdThuc = sanPhamMoi.getId();
+        final int sizeIdMacDinh = 0; // Phụ kiện luôn có sizeId = 0
+
+        compositeDisposable.add(appDatabase.gioHangDAO().getProductByPrimaryKey(sanPhamIdThuc, sizeIdMacDinh)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        existingCartItem -> {
+                            existingCartItem.setSoluong(existingCartItem.getSoluong() + soLuongMua);
+                            insertOrUpdateDatabase(existingCartItem, "Đã cập nhật số lượng trong giỏ");
+                        },
+                        throwable -> {
+                            GioHang newCartItem = new GioHang();
+                            newCartItem.setIdsp(sanPhamIdThuc); // ID thật
+                            newCartItem.setTensp(sanPhamMoi.getTensanpham());
+                            newCartItem.setGiasp(Long.parseLong(sanPhamMoi.getGiasanpham()));
+                            newCartItem.setHinhanh(sanPhamMoi.getHinhanhsanpham());
+                            newCartItem.setSoluong(soLuongMua);
+                            newCartItem.setSizeId(sizeIdMacDinh); // ID Size mặc định là 0
+                            newCartItem.setSize("Phụ kiện");
+                            insertOrUpdateDatabase(newCartItem, "Đã thêm sản phẩm vào giỏ hàng");
+                        }
+                ));
+    }
+
+    private void themSanPhamCoSizeVaoGio() {
+        if (spinnerSize.getSelectedItem() == null) {
+            Toast.makeText(this, "Vui lòng chọn size sản phẩm", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SanPhamSize selectedSize = (SanPhamSize) spinnerSize.getSelectedItem();
+        int soLuongMua = Integer.parseInt(spinnerSoLuong.getSelectedItem().toString());
+
+        if (soLuongMua > selectedSize.getSoluong()) {
+            Toast.makeText(this, "Số lượng trong kho không đủ!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final int sanPhamIdThuc = sanPhamMoi.getId(); // ID thật của sản phẩm
+        final int sizeIdThuc = selectedSize.getSize_id(); // ID thật của size đã chọn
+
+        // THAY ĐỔI: Gọi hàm DAO mới với 2 tham số
+        compositeDisposable.add(appDatabase.gioHangDAO().getProductByPrimaryKey(sanPhamIdThuc, sizeIdThuc)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        existingCartItem -> {
+                            existingCartItem.setSoluong(existingCartItem.getSoluong() + soLuongMua);
+                            insertOrUpdateDatabase(existingCartItem, "Đã cập nhật số lượng trong giỏ");
+                        },
+                        throwable -> {
+                            GioHang newCartItem = new GioHang();
+                            // THAY ĐỔI: Gán ID sản phẩm thật, không nhân chia gì cả
+                            newCartItem.setIdsp(sanPhamIdThuc);
+                            newCartItem.setTensp(sanPhamMoi.getTensanpham());
+                            newCartItem.setGiasp(Long.parseLong(sanPhamMoi.getGiasanpham()));
+                            newCartItem.setHinhanh(sanPhamMoi.getHinhanhsanpham());
+                            newCartItem.setSoluong(soLuongMua);
+                            // THAY ĐỔI: Gán ID size thật
+                            newCartItem.setSizeId(sizeIdThuc);
+                            newCartItem.setSize(selectedSize.getTensize());
+                            insertOrUpdateDatabase(newCartItem, "Đã thêm sản phẩm vào giỏ hàng");
+                        }
+                ));
+    }
+
+    private void insertOrUpdateDatabase(GioHang gioHang, String message) {
+        compositeDisposable.add(appDatabase.gioHangDAO().insertOrReplace(gioHang)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show(),
+                        throwable -> Toast.makeText(this, "Lỗi database: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
+                ));
+    }
+
+    // --- Các hàm initView, initData, ActionToolBar, getSanPhamSize, initSpinnerSoLuong không thay đổi ---
     private void initView() {
         txtTen = findViewById(R.id.txttenchitietsp);
         txtGia = findViewById(R.id.txtgiachitietsp);
@@ -103,16 +188,13 @@ public class ChiTietActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 
-    // << 2. HÀM GETSANPHAMSIZE() ĐÃ ĐƯỢC SỬA LẠI HOÀN CHỈNH >>
     private void getSanPhamSize() {
         if (sanPhamMoi.getIdloaisanpham() == 5) {
-            // Nếu là phụ kiện, ẩn cả cụm chọn size
-            layoutSizeSelection.setVisibility(View.GONE); // << SỬA Ở ĐÂY
+            layoutSizeSelection.setVisibility(View.GONE);
             return;
         }
 
-        // Nếu không phải phụ kiện, hiện cả cụm chọn size
-        layoutSizeSelection.setVisibility(View.VISIBLE); // << SỬA Ở ĐÂY
+        layoutSizeSelection.setVisibility(View.VISIBLE);
 
         compositeDisposable.add(apiBanHang.getSanPhamSize(sanPhamMoi.getId())
                 .subscribeOn(Schedulers.io())
@@ -122,8 +204,7 @@ public class ChiTietActivity extends AppCompatActivity {
                             if (sanPhamSizeModel != null && sanPhamSizeModel.isSuccess()) {
                                 List<SanPhamSize> listSize = sanPhamSizeModel.getResult();
                                 if (listSize == null || listSize.isEmpty()) {
-                                    // Không có size thì ẩn đi
-                                    layoutSizeSelection.setVisibility(View.GONE); // << SỬA Ở ĐÂY
+                                    layoutSizeSelection.setVisibility(View.GONE);
                                     Toast.makeText(getApplicationContext(), "Sản phẩm này tạm hết hàng hoặc chưa có size", Toast.LENGTH_LONG).show();
                                 } else {
                                     ArrayAdapter<SanPhamSize> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listSize);
@@ -131,12 +212,12 @@ public class ChiTietActivity extends AppCompatActivity {
                                     spinnerSize.setAdapter(adapter);
                                 }
                             } else {
-                                layoutSizeSelection.setVisibility(View.GONE); // << SỬA Ở ĐÂY
+                                layoutSizeSelection.setVisibility(View.GONE);
                                 Toast.makeText(getApplicationContext(), "Sản phẩm này chưa có size", Toast.LENGTH_SHORT).show();
                             }
                         },
                         throwable -> {
-                            layoutSizeSelection.setVisibility(View.GONE); // << SỬA Ở ĐÂY
+                            layoutSizeSelection.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), "Lỗi khi tải size: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                 ));
@@ -148,86 +229,6 @@ public class ChiTietActivity extends AppCompatActivity {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, so);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSoLuong.setAdapter(adapter);
-    }
-
-    private void themVaoGio() {
-        if (sanPhamMoi.getIdloaisanpham() == 5) {
-            themPhuKienVaoGio();
-        } else {
-            themSanPhamCoSizeVaoGio();
-        }
-    }
-
-    private void themPhuKienVaoGio() {
-        final int gioHangId = sanPhamMoi.getId();
-        final int soLuongMua = Integer.parseInt(spinnerSoLuong.getSelectedItem().toString());
-
-        compositeDisposable.add(appDatabase.gioHangDAO().getProductById(gioHangId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        existingCartItem -> {
-                            existingCartItem.setSoluong(existingCartItem.getSoluong() + soLuongMua);
-                            insertOrUpdateDatabase(existingCartItem, "Đã cập nhật số lượng trong giỏ");
-                        },
-                        throwable -> {
-                            GioHang newCartItem = new GioHang();
-                            newCartItem.setId(gioHangId);
-                            newCartItem.setTensp(sanPhamMoi.getTensanpham());
-                            newCartItem.setGiasp(Long.parseLong(sanPhamMoi.getGiasanpham()));
-                            newCartItem.setHinhanh(sanPhamMoi.getHinhanhsanpham());
-                            newCartItem.setSoluong(soLuongMua);
-                            newCartItem.setSize("");
-                            insertOrUpdateDatabase(newCartItem, "Đã thêm sản phẩm vào giỏ hàng");
-                        }
-                ));
-    }
-
-    private void themSanPhamCoSizeVaoGio() {
-        if (spinnerSize.getSelectedItem() == null) {
-            Toast.makeText(this, "Vui lòng chọn size sản phẩm", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        SanPhamSize selectedSize = (SanPhamSize) spinnerSize.getSelectedItem();
-        int soLuongMua = Integer.parseInt(spinnerSoLuong.getSelectedItem().toString());
-
-        if (soLuongMua > selectedSize.getSoluong()) {
-            Toast.makeText(this, "Số lượng trong kho không đủ!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        final int gioHangId = sanPhamMoi.getId() * 100 + selectedSize.getSize_id();
-
-        compositeDisposable.add(appDatabase.gioHangDAO().getProductById(gioHangId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        existingCartItem -> {
-                            existingCartItem.setSoluong(existingCartItem.getSoluong() + soLuongMua);
-                            insertOrUpdateDatabase(existingCartItem, "Đã cập nhật số lượng trong giỏ");
-                        },
-                        throwable -> {
-                            GioHang newCartItem = new GioHang();
-                            newCartItem.setId(gioHangId);
-                            newCartItem.setTensp(sanPhamMoi.getTensanpham());
-                            newCartItem.setGiasp(Long.parseLong(sanPhamMoi.getGiasanpham()));
-                            newCartItem.setHinhanh(sanPhamMoi.getHinhanhsanpham());
-                            newCartItem.setSoluong(soLuongMua);
-                            newCartItem.setSize(selectedSize.getTensize());
-                            insertOrUpdateDatabase(newCartItem, "Đã thêm sản phẩm vào giỏ hàng");
-                        }
-                ));
-    }
-
-    private void insertOrUpdateDatabase(GioHang gioHang, String message) {
-        compositeDisposable.add(appDatabase.gioHangDAO().insertOrReplace(gioHang)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show(),
-                        throwable -> Toast.makeText(this, "Lỗi database: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
-                ));
     }
 
     @Override

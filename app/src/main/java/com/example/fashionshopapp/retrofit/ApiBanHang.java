@@ -67,4 +67,8 @@ public interface ApiBanHang {
             @Field("matkhau") String password,
             @Field("otp") String otp
     );
+
+    @POST("donhang.php")
+    @Headers("Content-Type: application/json")
+    Observable<UserModel> datHang(@Body RequestBody body);
 }

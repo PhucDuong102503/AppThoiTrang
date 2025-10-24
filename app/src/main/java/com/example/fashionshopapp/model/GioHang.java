@@ -2,31 +2,40 @@ package com.example.fashionshopapp.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import com.google.gson.annotations.SerializedName;
 
-// @Entity đánh dấu đây là một bảng trong database.
-// tableName là tên của bảng.
-@Entity(tableName = "giohang")
+// THAY ĐỔI 1: Định nghĩa lại khóa chính là sự kết hợp của idsp và sizeId
+@Entity(tableName = "giohang", primaryKeys = {"idsp", "sizeId"})
 public class GioHang {
 
-    // @PrimaryKey đánh dấu đây là cột khóa chính.
-    @PrimaryKey
-    private int id; // ID này sẽ là sự kết hợp của id sản phẩm và id size.
+    // THAY ĐỔI 2: Đánh dấu @NonNull để đảm bảo cột này không bao giờ null
+    @NonNull
+    @SerializedName("sanpham_id")
+    private int idsp;
 
     private String tensp;
+
+    @SerializedName("gia")
     private long giasp;
+
     private String hinhanh;
-    private int soluong; // Số lượng người dùng muốn mua
-    private String size;   // Size người dùng đã chọn (ví dụ: "M")
 
-    // --- BẮT BUỘC PHẢI CÓ GETTER VÀ SETTER CHO TẤT CẢ CÁC TRƯỜNG ---
+    @SerializedName("soluong")
+    private int soluong;
 
-    public int getId() {
-        return id;
+    @NonNull
+    @SerializedName("size_id")
+    private int sizeId;
+
+    private String size;
+
+    // --- Toàn bộ phần Getters và Setters giữ nguyên, không cần thay đổi ---
+    public int getIdsp() {
+        return idsp;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdsp(int idsp) {
+        this.idsp = idsp;
     }
 
     public String getTensp() {
@@ -59,6 +68,14 @@ public class GioHang {
 
     public void setSoluong(int soluong) {
         this.soluong = soluong;
+    }
+
+    public int getSizeId() {
+        return sizeId;
+    }
+
+    public void setSizeId(int sizeId) {
+        this.sizeId = sizeId;
     }
 
     public String getSize() {

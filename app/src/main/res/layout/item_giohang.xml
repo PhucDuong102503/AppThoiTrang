@@ -100,16 +100,16 @@
             </LinearLayout>
 
             <!-- Tổng tiền cho sản phẩm này (có thể bỏ đi để giao diện gọn hơn) -->
-            <TextView
-                android:id="@+id/item_giohang_tongtien"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="Tổng: 250,000đ"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_marginTop="8dp"/>
+<!--            <TextView-->
+<!--                android:id="@+id/item_giohang_tongtien"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="end"-->
+<!--                android:text="Tổng: 250,000đ"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                android:layout_marginTop="8dp"/>-->
 
         </LinearLayout>
 
