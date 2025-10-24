@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,10 @@ import com.bumptech.glide.Glide;
 import com.example.fashionshopapp.Interface.GioHangItemClickListener;
 import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.model.GioHang;
+import com.example.fashionshopapp.model.EventBus.TinhTongEvent;
+import com.example.fashionshopapp.util.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -50,6 +56,22 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
         holder.txtGiaSp.setText("Giá: " + decimalFormat.format(gioHang.getGiasp()) + "đ");
         holder.txtSoLuong.setText(String.valueOf(gioHang.getSoluong()));
         Glide.with(context).load(gioHang.getHinhanh()).into(holder.imgAnh);
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean b) {
+                if(b){
+                    Utils.mangmuahang.add(gioHang);
+                    EventBus.getDefault().postSticky(new TinhTongEvent());
+                } else {
+                    for (int i = 0; i < Utils.mangmuahang.size(); i++){
+                        if(Utils.mangmuahang.get(i).getIdsp() == gioHang.getIdsp()){
+                            Utils.mangmuahang.remove(i);
+                            EventBus.getDefault().postSticky(new TinhTongEvent());
+                        }
+                    }
+                }
+            }
+        });
 
         // Hiển thị Size (nếu có)
         if (gioHang.getSize() != null && !gioHang.getSize().isEmpty() && !gioHang.getSize().equals("Phụ kiện")) {
@@ -94,6 +116,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
         ImageView imgAnh, imgXoa;
         TextView txtTenSp, txtGiaSp, txtSoLuong, txtSize; // Bỏ txtTongTien vì nó ở ngoài
         Button btnCong, btnTru;
+        CheckBox checkBox;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +129,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
             txtSize = itemView.findViewById(R.id.itemgiohangsize);
             btnCong = itemView.findViewById(R.id.item_giohang_cong); // Nút cộng
             btnTru = itemView.findViewById(R.id.item_giohang_tru);   // Nút trừ
+            checkBox = itemView.findViewById(R.id.item_giohang_check);
         }
     }
 }

@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 // THAY ĐỔI 1: Định nghĩa lại khóa chính là sự kết hợp của idsp và sizeId
 @Entity(tableName = "giohang", primaryKeys = {"idsp", "sizeId"})
-public class GioHang {
+public class GioHang implements Serializable {
 
     // THAY ĐỔI 2: Đánh dấu @NonNull để đảm bảo cột này không bao giờ null
     @NonNull

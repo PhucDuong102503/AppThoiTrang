@@ -1,8 +1,7 @@
 package com.example.fashionshopapp.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.LayoutInflater;import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,8 +17,8 @@ import java.util.List;
 
 public class ThanhToanAdapter extends RecyclerView.Adapter<ThanhToanAdapter.MyViewHolder> {
 
-    Context context;
-    List<GioHang> gioHangList;
+    private Context context;
+    private List<GioHang> gioHangList;
 
     public ThanhToanAdapter(Context context, List<GioHang> gioHangList) {
         this.context = context;
@@ -29,19 +28,25 @@ public class ThanhToanAdapter extends RecyclerView.Adapter<ThanhToanAdapter.MyVi
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_thanhtoan, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_thanhtoan, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         GioHang gioHang = gioHangList.get(position);
+
         holder.txtTenSp.setText(gioHang.getTensp());
         holder.txtSoLuong.setText("x" + gioHang.getSoluong());
-        Glide.with(context).load(gioHang.getHinhanh()).into(holder.imgAnh);
 
-        // Logic hiển thị size
-        if (gioHang.getSize() != null && !gioHang.getSize().isEmpty()) {
+        // Hiển thị hình ảnh sản phẩm
+        Glide.with(context)
+                .load(gioHang.getHinhanh())
+                .placeholder(R.drawable.ic_media_24) // Ảnh mặc định trong khi chờ tải
+                .into(holder.imgAnh);
+
+        // Hiển thị size hoặc ẩn đi nếu không có
+        if (gioHang.getSize() != null && !gioHang.getSize().isEmpty() && !gioHang.getSize().equalsIgnoreCase("Phụ kiện")) {
             holder.txtSize.setText("Size: " + gioHang.getSize());
             holder.txtSize.setVisibility(View.VISIBLE);
         } else {
