@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         }
     }
 
-
     private void getEventClick() {
         listViewManHinhChinh.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -139,23 +138,24 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         });
     }
 
-    private void getSpMoi() {    compositeDisposable.add(apiBanHang.getSpMoi()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                    sanPhamMoiModel -> {
-                        if(sanPhamMoiModel.isSuccess()){
-                            mangSpMoi = sanPhamMoiModel.getResult();
-                            // SỬA DÒNG NÀY: Truyền `this` (chính là MainActivity) vào làm listener
-                            spMoiAdapter = new SanPhamMoiAdapter(getApplicationContext(), mangSpMoi, this);
-                            recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
-                            // Dòng notifyDataSetChanged() không cần thiết khi set adapter lần đầu
+    private void getSpMoi() {
+        compositeDisposable.add(apiBanHang.getSpMoi()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        sanPhamMoiModel -> {
+                            if (sanPhamMoiModel.isSuccess()) {
+                                mangSpMoi = sanPhamMoiModel.getResult();
+                                // SỬA DÒNG NÀY: Truyền `this` (chính là MainActivity) vào làm listener
+                                spMoiAdapter = new SanPhamMoiAdapter(getApplicationContext(), mangSpMoi, this);
+                                recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
+                                // Dòng notifyDataSetChanged() không cần thiết khi set adapter lần đầu
+                            }
+                        },
+                        throwable -> {
+                            Toast.makeText(getApplicationContext(), "Khong ket noi duoc server" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    },
-                    throwable -> {
-                        Toast.makeText(getApplicationContext(), "Khong ket noi duoc server" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-            ));
+                ));
     }
 
 
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         loaiSpModel -> {
-                            if(loaiSpModel.isSuccess()){
+                            if (loaiSpModel.isSuccess()) {
                                 //khoi tao adapter ne
                                 mangloaisp = loaiSpModel.getResult();
                                 loaiSpAdapter = new LoaiSpAdapter(mangloaisp, getApplicationContext());
@@ -250,22 +250,32 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         super.onDestroy();
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Hàm này được gọi để tạo menu trên Toolbar.
-        // Nó sẽ đọc file menu_main.xml và hiển thị các item trong đó.
+        // Chỉ cần giữ lại hàm này một lần duy nhất
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // Hàm này được gọi khi người dùng nhấn vào một item trong menu.
-        if (item.getItemId() == R.id.menu_giohang) {
-            // Nếu item được nhấn là giỏ hàng
+        // Hàm này sẽ xử lý tất cả các click trên menu
+        int id = item.getItemId();
+
+        if (id == R.id.menu_giohang) {
+            // Nếu là nút giỏ hàng
             Intent intent = new Intent(getApplicationContext(), GioHangActivity.class);
             startActivity(intent);
+            // Không cần 'return true' ở đây để code tiếp tục chạy nếu cần
+
+        } else if (id == R.id.search) {
+            // Nếu là nút tìm kiếm
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
+            // 'return true' ở đây cũng được, báo rằng sự kiện đã được xử lý
+            return true;
         }
+
+        // Trả về mặc định nếu không phải các item trên
         return super.onOptionsItemSelected(item);
     }
 }

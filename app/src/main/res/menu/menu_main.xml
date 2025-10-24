@@ -3,10 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/search"
+        android:title="Search"
+        android:icon="@drawable/search_3"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_giohang"
         android:title="Giỏ hàng"
-        android:icon="@drawable/shopping_cart"
+        android:icon="@drawable/shopping_cart_1"
         app:showAsAction="always" />
-
 </menu>
     

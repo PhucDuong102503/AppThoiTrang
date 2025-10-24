@@ -27,6 +27,12 @@ public interface ApiBanHang {
             @Field("page") int page,
             @Field("idloaisanpham") int idloaisanpham);
 
+    @POST("timkiem.php")
+    @FormUrlEncoded
+    Observable<SanPhamMoiModel> search(
+            @Field("search") String search
+    );
+
     @POST("getSanPhamSize.php")
     @FormUrlEncoded
     Observable<SanPhamSizeModel> getSanPhamSize(@Field("sanpham_id") int sanpham_id);

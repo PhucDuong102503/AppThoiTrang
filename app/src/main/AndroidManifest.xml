@@ -16,6 +16,9 @@
         android:theme="@style/Theme.FashionShopApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.SearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ThanhToanActivity"
             android:exported="false" />
         <activity
