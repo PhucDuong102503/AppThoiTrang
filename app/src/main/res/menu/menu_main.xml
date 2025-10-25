@@ -17,6 +17,10 @@
         android:id="@+id/menu_donhang"
         android:title="Lịch sử đơn hàng"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_hoso"
+        android:title="Hồ sơ cá nhân"
+        app:showAsAction="never"/>
 
 </menu>
     

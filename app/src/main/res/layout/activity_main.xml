@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="#FF5722"
-            app:title="Trang Chính"
+            app:title="Fashion Shop"
             app:titleTextColor="@android:color/white" />
 
         <!-- Bọc các phần còn lại vào NestedScrollView để cuộn được -->

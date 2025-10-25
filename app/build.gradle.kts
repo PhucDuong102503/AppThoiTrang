@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -30,6 +31,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
 
 dependencies {
 
@@ -74,5 +76,8 @@ dependencies {
     implementation("org.greenrobot:eventbus:3.2.0")
     // paper
     implementation("io.github.pilgr:paperdb:2.7.1")
+
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
 
 }

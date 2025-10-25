@@ -8,6 +8,7 @@ public class User {
     String sodienthoai;
     String email;
     String diachi;
+    private String hinhanh;
 
     public User() {
     }
@@ -76,5 +77,13 @@ public class User {
 
     public void setDiachi(String diachi) {
         this.diachi = diachi;
+    }
+
+    public String getHinhanh() {
+        return hinhanh;
+    }
+
+    public void setHinhanh(String hinhanh) {
+        this.hinhanh = hinhanh;
     }
 }

@@ -278,6 +278,10 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
             Intent intent = new Intent(this, XemDonHangActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.menu_hoso) {
+            // Tạo một Intent để mở ProfileActivity
+            Intent hoso = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(hoso);
         }
 
         // Trả về mặc định nếu không phải các item trên

@@ -7,13 +7,16 @@ import com.example.fashionshopapp.model.SanPhamSizeModel;
 import com.example.fashionshopapp.model.UserModel;
 
 import io.reactivex.rxjava3.core.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface ApiBanHang {
     @GET("getloaisp.php")
@@ -83,5 +86,15 @@ public interface ApiBanHang {
     @FormUrlEncoded
     Observable<DonHangModel> xemDonHang(
             @Field("user_id") int user_id
+    );
+
+    @Multipart
+    @POST("update_profile.php")
+    Observable<UserModel> updateProfile(
+            @Part("id") RequestBody id,
+            @Part("hoten") RequestBody hoten,
+            @Part("sodienthoai") RequestBody sodienthoai,
+            @Part("diachi") RequestBody diachi,
+            @Part MultipartBody.Part file
     );
 }
