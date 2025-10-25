@@ -1,5 +1,6 @@
 package com.example.fashionshopapp.retrofit;
 
+import com.example.fashionshopapp.model.DonHangModel;
 import com.example.fashionshopapp.model.LoaiSpModel;
 import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.model.SanPhamSizeModel;
@@ -77,4 +78,10 @@ public interface ApiBanHang {
     @POST("donhang.php")
     @Headers("Content-Type: application/json")
     Observable<UserModel> datHang(@Body RequestBody body);
+
+    @POST("get_order_history.php")
+    @FormUrlEncoded
+    Observable<DonHangModel> xemDonHang(
+            @Field("user_id") int user_id
+    );
 }

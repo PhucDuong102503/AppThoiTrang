@@ -273,6 +273,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
             startActivity(intent);
             // 'return true' ở đây cũng được, báo rằng sự kiện đã được xử lý
             return true;
+        } else if (id == R.id.menu_donhang) { //
+            // Chuyển sang màn hình Lịch sử đơn hàng
+            Intent intent = new Intent(this, XemDonHangActivity.class);
+            startActivity(intent);
+            return true;
         }
 
         // Trả về mặc định nếu không phải các item trên

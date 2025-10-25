@@ -12,5 +12,11 @@
         android:title="Giỏ hàng"
         android:icon="@drawable/shopping_cart_1"
         app:showAsAction="always" />
+    <!-- res/menu/menu_main.xml -->
+    <item
+        android:id="@+id/menu_donhang"
+        android:title="Lịch sử đơn hàng"
+        app:showAsAction="never"/>
+
 </menu>
     

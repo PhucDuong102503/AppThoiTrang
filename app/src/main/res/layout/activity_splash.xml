@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".activity.SplashActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activity.SplashActivity">
+
+    <!-- Ảnh nền -->
+    <ImageView
+        android:id="@+id/splash_image"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:src="@drawable/splash_pic"
+        android:scaleType="centerCrop"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/splash_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/splash_image"
+        android:layout_centerHorizontal="true"
+        android:text="Your Shopping Destination\nfor Everything"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Mô tả ngắn -->
+    <TextView
+        android:id="@+id/splash_subtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/splash_title"
+        android:layout_centerHorizontal="true"
+        android:text="Get personalized recommendations\nEnjoy fast, free shipping"
+        android:textAlignment="center"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Nút bắt đầu -->
+    <Button
+        android:id="@+id/btn_get_started"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:text="Let's Get Started"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#E67E22"
+        android:layout_below="@id/splash_subtext"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_button" />
+
+</RelativeLayout>
+</ScrollView>
