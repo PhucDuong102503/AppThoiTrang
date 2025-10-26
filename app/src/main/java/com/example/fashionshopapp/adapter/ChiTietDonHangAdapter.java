@@ -12,17 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.fashionshopapp.R;
-import com.example.fashionshopapp.model.GioHang;
+// ⭐ QUAN TRỌNG: Đổi import từ GioHang sang Item
+import com.example.fashionshopapp.model.Item;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
+// ⭐ ĐÃ SỬA ĐỂ LÀM VIỆC VỚI List<Item>
 public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAdapter.MyViewHolder> {
 
-    private Context context;
-    private List<GioHang> itemList;
+    private final Context context;
+    // ⭐ Sửa kiểu dữ liệu của list
+    private final List<Item> itemList;
 
-    public ChiTietDonHangAdapter(Context context, List<GioHang> itemList) {
+    // ⭐ Sửa constructor để nhận List<Item>
+    public ChiTietDonHangAdapter(Context context, List<Item> itemList) {
         this.context = context;
         this.itemList = itemList;
     }
@@ -30,25 +33,29 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Chúng ta sẽ dùng lại layout item_thanhtoan.xml vì nó phù hợp
+        // Dùng lại layout item_thanhtoan vì nó phù hợp
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_thanhtoan, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        GioHang item = itemList.get(position);
+        // ⭐ Giờ đây 'item' là đối tượng của lớp Item
+        Item item = itemList.get(position);
 
-        holder.txtTenSp.setText(item.getTensp());
-        holder.txtSoLuong.setText("x" + item.getSoluong());
+        // ⭐ Lấy tên sản phẩm từ getTensanpham() của model Item
+        holder.txtTenSp.setText(item.getTensanpham());
+        holder.txtSoLuong.setText("Số lượng: " + item.getSoluong());
 
+        // ⭐ Lấy ảnh từ getHinhanhsanpham() của model Item
         Glide.with(context)
-                .load(item.getHinhanh())
+                .load(item.getHinhanhsanpham())
                 .placeholder(R.drawable.ic_media_24)
                 .into(holder.imgAnh);
 
-        if (item.getSize() != null && !item.getSize().isEmpty() && !item.getSize().equalsIgnoreCase("Phụ kiện")) {
-            holder.txtSize.setText("Size: " + item.getSize());
+        // ⭐ Lấy tên size từ getTensize() của model Item
+        if (item.getTensize() != null && !item.getTensize().isEmpty()) {
+            holder.txtSize.setText("Size: " + item.getTensize());
             holder.txtSize.setVisibility(View.VISIBLE);
         } else {
             holder.txtSize.setVisibility(View.GONE);

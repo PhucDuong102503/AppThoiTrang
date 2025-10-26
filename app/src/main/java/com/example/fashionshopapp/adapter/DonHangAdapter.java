@@ -1,26 +1,38 @@
 package com.example.fashionshopapp.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;import android.widget.TextView;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.model.DonHang;
+// ⭐ Đảm bảo chỉ có duy nhất dòng import Item này
+import com.example.fashionshopapp.model.Item;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
 public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHolder> {
-    private Context context;
-    private List<DonHang> listDonHang;
 
-    public DonHangAdapter(Context context, List<DonHang> listDonHang) {
+    public interface OnHuyDonClickListener {
+        void onHuyDonClick(DonHang donHang);
+    }
+
+    private final Context context;
+    private final List<DonHang> listDonHang;
+    private final OnHuyDonClickListener listener;
+
+    public DonHangAdapter(Context context, List<DonHang> listDonHang, OnHuyDonClickListener listener) {
         this.context = context;
         this.listDonHang = listDonHang;
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,36 +45,49 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         DonHang donHang = listDonHang.get(position);
-        holder.txtMaDonHang.setText("Mã đơn hàng: #" + donHang.getId());
-        //DecimalFormat decimalFormat = new DecimalFormat("###,###,###'đ'");
-        //holder.txtTongTien.setText("Tổng tiền: " + decimalFormat.format(donHang.getTongtien()));
+
+        holder.txtMaDonHang.setText("Đơn hàng #" + donHang.getId());
+        holder.txtTrangThai.setText(donHang.getTrangthai());
+        holder.txtNgayDat.setText("Ngày đặt: " + donHang.getNgaydathang());
 
         try {
-            // Chỉ khai báo DecimalFormat một lần ở đây
             DecimalFormat decimalFormat = new DecimalFormat("###,###,###'đ'");
-
-            // Chuyển đổi String từ API thành số để định dạng
             double tongTienValue = Double.parseDouble(donHang.getTongtien());
-
-            // Định dạng và hiển thị
             holder.txtTongTien.setText("Tổng tiền: " + decimalFormat.format(tongTienValue));
         } catch (NumberFormatException e) {
-            // Nếu có lỗi (ví dụ: giá trị không phải là số), hiển thị giá trị gốc
             holder.txtTongTien.setText("Tổng tiền: " + donHang.getTongtien() + "đ");
         }
 
-        // RecyclerView con để hiển thị chi tiết sản phẩm
+        if ("Chờ giao hàng".equals(donHang.getTrangthai())) {
+            holder.btnHuyDon.setVisibility(View.VISIBLE);
+            holder.btnHuyDon.setOnClickListener(v -> {
+                if (listener != null) {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Xác nhận hủy đơn hàng")
+                            .setMessage("Bạn có chắc chắn muốn hủy đơn hàng #" + donHang.getId() + "?")
+                            .setPositiveButton("Đồng ý", (dialog, which) -> listener.onHuyDonClick(donHang))
+                            .setNegativeButton("Không", null)
+                            .show();
+                }
+            });
+        } else {
+            holder.btnHuyDon.setVisibility(View.GONE);
+        }
+
+        // Cài đặt RecyclerView con
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 holder.recyclerChiTiet.getContext(),
                 LinearLayoutManager.VERTICAL,
                 false
         );
-        layoutManager.setInitialPrefetchItemCount(donHang.getChitiet().size());
 
-        // Adapter cho chi tiết
-        ChiTietDonHangAdapter chiTietAdapter = new ChiTietDonHangAdapter(context, donHang.getChitiet());
-        holder.recyclerChiTiet.setLayoutManager(layoutManager);
-        holder.recyclerChiTiet.setAdapter(chiTietAdapter);
+        // Dòng này bây giờ sẽ không còn lỗi
+        if (donHang.getItems() != null && !donHang.getItems().isEmpty()) {
+            layoutManager.setInitialPrefetchItemCount(donHang.getItems().size());
+            ChiTietDonHangAdapter chiTietAdapter = new ChiTietDonHangAdapter(context, donHang.getItems());
+            holder.recyclerChiTiet.setLayoutManager(layoutManager);
+            holder.recyclerChiTiet.setAdapter(chiTietAdapter);
+        }
     }
 
     @Override
@@ -71,14 +96,18 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView txtMaDonHang, txtTongTien;
+        TextView txtMaDonHang, txtTongTien, txtTrangThai, txtNgayDat;
         RecyclerView recyclerChiTiet;
+        Button btnHuyDon;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             txtMaDonHang = itemView.findViewById(R.id.iddonhang);
             txtTongTien = itemView.findViewById(R.id.tongtiendonhang);
+            txtTrangThai = itemView.findViewById(R.id.trangthaidonhang);
+            txtNgayDat = itemView.findViewById(R.id.ngaydatdonhang);
             recyclerChiTiet = itemView.findViewById(R.id.recycleview_chitiet);
+            btnHuyDon = itemView.findViewById(R.id.btn_huydon);
         }
     }
 }

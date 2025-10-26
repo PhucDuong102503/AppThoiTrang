@@ -2,6 +2,7 @@ package com.example.fashionshopapp.retrofit;
 
 import com.example.fashionshopapp.model.DonHangModel;
 import com.example.fashionshopapp.model.LoaiSpModel;
+import com.example.fashionshopapp.model.MessageModel;
 import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.model.SanPhamSizeModel;
 import com.example.fashionshopapp.model.UserModel;
@@ -78,9 +79,22 @@ public interface ApiBanHang {
             @Field("otp") String otp
     );
 
-    @POST("donhang.php")
-    @Headers("Content-Type: application/json")
-    Observable<UserModel> datHang(@Body RequestBody body);
+//    @POST("donhang.php")
+//    @Headers("Content-Type: application/json")
+//    Observable<UserModel> datHang(@Body RequestBody body);
+// HÀM MỚI - KHẮC PHỤC LỖI
+@POST("donhang.php")
+@FormUrlEncoded
+Observable<MessageModel> datHang(
+        @Field("user_id") int user_id,
+        @Field("diachi") String diachi,
+        @Field("sodienthoai") String sodienthoai,
+        @Field("email") String email,
+        @Field("soluong") int soluong,
+        @Field("tongtien") String tongtien,
+        @Field("chitiet") String chitiet
+);
+
 
     @POST("get_order_history.php")
     @FormUrlEncoded
@@ -97,4 +111,20 @@ public interface ApiBanHang {
             @Part("diachi") RequestBody diachi,
             @Part MultipartBody.Part file
     );
+
+    // Trong file ApiBanHang.java
+
+    @POST("xemdonhang.php")
+    @FormUrlEncoded
+    Observable<DonHangModel> xemDonHang(
+            @Field("user_id") int user_id,
+            @Field("trangthai") String trangthai
+    );
+
+    @POST("huydonhang.php")
+    @FormUrlEncoded
+    Observable<MessageModel> huyDonHang(
+            @Field("donhang_id") int donhang_id
+    );
+
 }

@@ -1,44 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:orientation="vertical"
+    android:padding="12dp">
 
+    <!-- Phần Header của đơn hàng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/iddonhang"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Mã đơn hàng: #123"
+            android:layout_weight="1"
+            android:text="Đơn hàng #123"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"/>
-
-        <!-- Đây là RecyclerView con để hiển thị các sản phẩm trong đơn hàng -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleview_chitiet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"/>
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tongtiendonhang"
+            android:id="@+id/trangthaidonhang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:text="Tổng tiền: 500,000đ"
-            android:layout_marginTop="12dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/red_200"/>
+            android:text="Chờ giao hàng"
+            android:textColor="#FFA000"
+            android:textStyle="italic" />
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    <!-- RecyclerView con để hiển thị danh sách sản phẩm -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleview_chitiet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Đường kẻ ngang phân cách -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#E0E0E0" />
+
+    <!-- Phần Footer của đơn hàng -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/ngaydatdonhang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Ngày đặt: 20/10/2025"
+            android:textSize="12sp" />
+
+
+
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/tongtiendonhang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="Tổng tiền: 550,000đ"
+        android:textColor="@color/red"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Nút Hủy Đơn, chỉ hiển thị khi cần -->
+    <Button
+        android:id="@+id/btn_huydon"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#F44336"
+        android:text="Hủy Đơn Hàng"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</LinearLayout>
