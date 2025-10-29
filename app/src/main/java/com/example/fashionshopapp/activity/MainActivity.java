@@ -258,33 +258,41 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // Hàm này sẽ xử lý tất cả các click trên menu
+        // Sử dụng switch-case sẽ gọn gàng hơn khi có nhiều item
         int id = item.getItemId();
 
         if (id == R.id.menu_giohang) {
-            // Nếu là nút giỏ hàng
-            Intent intent = new Intent(getApplicationContext(), GioHangActivity.class);
-            startActivity(intent);
-            // Không cần 'return true' ở đây để code tiếp tục chạy nếu cần
+            // Mở màn hình Giỏ hàng
+            Intent cartIntent = new Intent(getApplicationContext(), GioHangActivity.class);
+            startActivity(cartIntent);
+            return true; // Sự kiện đã được xử lý
 
         } else if (id == R.id.search) {
-            // Nếu là nút tìm kiếm
-            Intent intent = new Intent(this, SearchActivity.class);
-            startActivity(intent);
-            // 'return true' ở đây cũng được, báo rằng sự kiện đã được xử lý
-            return true;
-        } else if (id == R.id.menu_donhang) { //
-            // Chuyển sang màn hình Lịch sử đơn hàng
-            Intent intent = new Intent(this, XemDonHangActivity.class);
-            startActivity(intent);
-            return true;
+            // Mở màn hình Tìm kiếm
+            Intent searchIntent = new Intent(this, SearchActivity.class);
+            startActivity(searchIntent);
+            return true; // Sự kiện đã được xử lý
+
+        } else if (id == R.id.menu_chat) {
+            // === THÊM MỚI: Mở màn hình Chat ===
+            Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+            startActivity(chatIntent);
+            return true; // Sự kiện đã được xử lý
+
+        } else if (id == R.id.menu_donhang) {
+            // Mở màn hình Lịch sử đơn hàng
+            Intent orderIntent = new Intent(this, XemDonHangActivity.class);
+            startActivity(orderIntent);
+            return true; // Sự kiện đã được xử lý
+
         } else if (id == R.id.menu_hoso) {
-            // Tạo một Intent để mở ProfileActivity
-            Intent hoso = new Intent(getApplicationContext(), ProfileActivity.class);
-            startActivity(hoso);
+            // Mở màn hình Hồ sơ
+            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(profileIntent);
+            return true; // Sự kiện đã được xử lý
         }
 
-        // Trả về mặc định nếu không phải các item trên
+        // Nếu không phải các item trên, hãy để hệ thống tự xử lý (ví dụ: nút back trên toolbar)
         return super.onOptionsItemSelected(item);
     }
 }

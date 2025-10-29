@@ -2,10 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
+
     <item
         android:id="@+id/search"
         android:title="Search"
         android:icon="@drawable/search_3"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_chat"
+        android:icon="@drawable/send_1"
+        android:title="Chat"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_giohang"
