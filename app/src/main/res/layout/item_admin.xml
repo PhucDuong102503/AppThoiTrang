@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"> <!-- Dùng foreground để có hiệu ứng ripple -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Ảnh đại diện -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_admin_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            tools:src="@tools:sample/avatars" />
+
+        <!-- Tên của Admin -->
+        <TextView
+            android:id="@+id/text_admin_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/image_admin_avatar"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:textSize="17sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:text="Tên Nhân Viên Hỗ Trợ" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

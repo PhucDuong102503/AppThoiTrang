@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F2F5"
+    tools:context=".activity.AdminListActivity">
+
+    <!-- Toolbar ở phía trên cùng -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_admin_list"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Chọn nhân viên hỗ trợ" />
+
+    <!-- RecyclerView để hiển thị danh sách các admin -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleview_admin_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_admin_list"
+        tools:listitem="@layout/item_admin" /> <!-- Dòng này để Android Studio hiển thị preview -->
+
+    <!-- Vòng xoay loading, sẽ hiển thị ở giữa màn hình -->
+    <ProgressBar
+        android:id="@+id/progressbar_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/toolbar_admin_list"
+    tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/text_empty_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Không có nhân viên hỗ trợ nào."
+        android:textSize="16sp"
+        android:textColor="@color/teal_200"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_admin_list" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import com.example.fashionshopapp.model.LoaiSpModel;
 import com.example.fashionshopapp.model.MessageModel;
 import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.model.SanPhamSizeModel;
+import com.example.fashionshopapp.model.UserApiResponse;
 import com.example.fashionshopapp.model.UserModel;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -125,6 +126,18 @@ Observable<MessageModel> datHang(
     @FormUrlEncoded
     Observable<MessageModel> huyDonHang(
             @Field("donhang_id") int donhang_id
+    );
+
+    // HÀM MỚI ĐỂ LẤY DANH SÁCH ADMIN
+    @GET("get_admins.php")
+    Observable<UserApiResponse> getAdmins();
+
+    // HÀM MỚI ĐỂ CẬP NHẬT FCM TOKEN
+    @POST("update_fcm_token.php")
+    @FormUrlEncoded
+    Observable<MessageModel> updateFcmToken(
+            @Field("user_id") int userId,
+            @Field("fcm_token") String token
     );
 
 }
