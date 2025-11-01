@@ -134,6 +134,7 @@ public class ChatActivity extends AppCompatActivity {
         message.put("content", messageText);
         message.put("created_at", new Date());
         message.put("conversationKey", conversationKey);
+        message.put("read", false);
 
         db.collection("messages").add(message)
                 .addOnSuccessListener(documentReference -> {

@@ -1,21 +1,19 @@
 package com.example.fashionshopapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.fashionshopapp.Interface.ItemClickListener; // 1. IMPORT INTERFACE
+import com.example.fashionshopapp.Interface.ItemClickListener;
 import com.example.fashionshopapp.R;
-import com.example.fashionshopapp.activity.ChiTietActivity;
 import com.example.fashionshopapp.model.SanPhamMoi;
+import com.example.fashionshopapp.util.Utils; // ⭐ QUAN TRỌNG: THÊM IMPORT NÀY
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -23,10 +21,8 @@ import java.util.List;
 public class SanPhamMoiAdapter extends RecyclerView.Adapter<SanPhamMoiAdapter.MyViewHolder> {
     Context context;
     List<SanPhamMoi> array;
-    // 2. KHAI BÁO BIẾN LISTENER
     private ItemClickListener itemClickListener;
 
-    // 3. SỬA HÀM KHỞI TẠO ĐỂ NHẬN LISTENER
     public SanPhamMoiAdapter(Context context, List<SanPhamMoi> array, ItemClickListener itemClickListener) {
         this.context = context;
         this.array = array;
@@ -43,47 +39,59 @@ public class SanPhamMoiAdapter extends RecyclerView.Adapter<SanPhamMoiAdapter.My
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         SanPhamMoi sanPhamMoi = array.get(position);
+        if (sanPhamMoi == null) return;
 
         holder.txtTen.setText(sanPhamMoi.getTensanpham());
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
-        holder.txtGia.setText("Giá: " + decimalFormat.format(Double.parseDouble(sanPhamMoi.getGiasanpham())) + "đ"); // Sửa lại format giá cho đúng
+        holder.txtGia.setText("Giá: " + decimalFormat.format(Double.parseDouble(sanPhamMoi.getGiasanpham())) + "đ");
 
-        Glide.with(context).load(sanPhamMoi.getHinhanhsanpham()).into(holder.imghinhanh);
+        // ⭐⭐ LOGIC XỬ LÝ HÌNH ẢNH "CHỐNG ĐẠN" (AN TOÀN TUYỆT ĐỐI) ⭐⭐
+        String imageUrl = sanPhamMoi.getHinhanhsanpham();
 
-        // 4. GÁN LISTENER CHO VIEW HOLDER
-        holder.setOnClickListener(this.itemClickListener);
+        // 1. Kiểm tra xem imageUrl có hợp lệ không
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            String fullImageUrl;
+            // 2. Nếu URL không bắt đầu bằng "http", nó là đường dẫn tương đối -> nối với BASE_URL
+            if (!imageUrl.startsWith("http")) {
+                fullImageUrl = Utils.BASE_URL + imageUrl;
+            } else {
+                // 3. Nếu đã là URL đầy đủ, dùng luôn
+                fullImageUrl = imageUrl;
+            }
+
+            // 4. Dùng Glide để tải ảnh
+            Glide.with(context)
+                    .load(fullImageUrl)
+                    .placeholder(R.drawable.ic_media_24) // Ảnh hiển thị khi đang tải
+                    .error(R.drawable.ic_media_24)      // Ảnh hiển thị nếu lỗi
+                    .into(holder.imghinhanh);
+        } else {
+            // 5. Nếu không có URL, hiển thị ảnh lỗi
+            holder.imghinhanh.setImageResource(R.drawable.ic_media_24);
+        }
+
+        // Gán sự kiện click cho item
+        holder.itemView.setOnClickListener(view -> {
+            if (itemClickListener != null) {
+                itemClickListener.onClick(view, position, false);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return array.size();
+        return array != null ? array.size() : 0;
     }
 
-    // 5. SỬA LẠI MYVIEW HOLDER
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView txtTen, txtGia;
         ImageView imghinhanh;
-        private ItemClickListener onClickListener; // Đổi tên để không nhầm lẫn
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTen = itemView.findViewById(R.id.itemsp_ten);
             txtGia = itemView.findViewById(R.id.itemsp_gia);
             imghinhanh = itemView.findViewById(R.id.itemsp_image);
-            // Đăng ký sự kiện click cho toàn bộ item
-            itemView.setOnClickListener(this);
-        }
-
-        public void setOnClickListener(ItemClickListener onClickListener) {
-            this.onClickListener = onClickListener;
-        }
-
-        @Override
-        public void onClick(View v) {
-            // Khi click, gọi ngược lại hàm của Activity/Fragment
-            if (onClickListener != null) {
-                onClickListener.onClick(v, getAdapterPosition(), false);
-            }
         }
     }
 }

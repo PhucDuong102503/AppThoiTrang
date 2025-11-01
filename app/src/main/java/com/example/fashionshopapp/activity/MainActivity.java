@@ -31,12 +31,8 @@ import com.example.fashionshopapp.Interface.ItemClickListener;
 import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.adapter.LoaiSpAdapter;
 import com.example.fashionshopapp.adapter.SanPhamMoiAdapter;
-import com.example.fashionshopapp.model.LoaiSpModel;
 import com.example.fashionshopapp.model.Loaisp;
-import com.example.fashionshopapp.model.MessageModel;
 import com.example.fashionshopapp.model.SanPhamMoi;
-import com.example.fashionshopapp.model.SanPhamMoiModel;
-// ⭐ SỬA LỖI: Trỏ đến đúng lớp User trong model của bạn ⭐
 import com.example.fashionshopapp.model.User;
 import com.example.fashionshopapp.retrofit.ApiBanHang;
 import com.example.fashionshopapp.retrofit.RetrofitClient;
@@ -53,10 +49,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements ItemClickListener {
-
-    // ... (toàn bộ code còn lại của bạn giữ nguyên, không cần thay đổi gì thêm)
-    // Tôi sẽ chỉ viết lại những phần quan trọng
+// ⭐ BƯỚC 1: Bỏ implements ItemClickListener không cần thiết nữa
+public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ViewFlipper viewFlipper;
@@ -64,19 +58,26 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     NavigationView navigationView;
     ListView listViewManHinhChinh;
     DrawerLayout drawerLayout;
+
+    // Các thành phần cho Loại Sản Phẩm
     LoaiSpAdapter loaiSpAdapter;
     List<Loaisp> mangloaisp;
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
-    ApiBanHang apiBanHang;
-    List<SanPhamMoi> mangSpMoi;
+
+    // Các thành phần cho Sản Phẩm Mới
     SanPhamMoiAdapter spMoiAdapter;
+    List<SanPhamMoi> mangSpMoi;
+
+    // Quản lý API calls
+    ApiBanHang apiBanHang;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Paper.init(this); // Đảm bảo Paper được khởi tạo
+
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
+        Paper.init(this);
 
         Anhxa();
         ActionBar();
@@ -92,13 +93,65 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         }
     }
 
+    private void Anhxa() {
+        toolbar = findViewById(R.id.toobarmanhinhchinh);
+        viewFlipper = findViewById(R.id.viewflipper);
+        recyclerViewmanhinhchinh = findViewById(R.id.recycleview);
+        navigationView = findViewById(R.id.navigationview);
+        listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
+        drawerLayout = findViewById(R.id.drawerlayout);
+
+        // Khởi tạo list
+        mangloaisp = new ArrayList<>();
+        mangSpMoi = new ArrayList<>();
+
+        // ⭐ BƯỚC 2: Khởi tạo Adapter ngay từ đầu với một danh sách rỗng
+        // và định nghĩa ItemClickListener ngay tại đây.
+        spMoiAdapter = new SanPhamMoiAdapter(this, mangSpMoi, (view, pos, isLongClick) -> {
+            if (!isLongClick) {
+                // Lấy sản phẩm được click từ danh sách
+                SanPhamMoi sanPhamDaClick = mangSpMoi.get(pos);
+                // Tạo Intent và truyền dữ liệu
+                Intent intent = new Intent(MainActivity.this, ChiTietActivity.class);
+                intent.putExtra("chitiet", sanPhamDaClick);
+                startActivity(intent);
+            }
+        });
+
+        // Cấu hình RecyclerView cho Sản Phẩm Mới
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerViewmanhinhchinh.setLayoutManager(layoutManager);
+        recyclerViewmanhinhchinh.setHasFixedSize(true);
+        recyclerViewmanhinhchinh.setAdapter(spMoiAdapter); // Gán adapter cho RecyclerView ngay lập tức
+    }
+
+    private void getSpMoi() {
+        compositeDisposable.add(apiBanHang.getSpMoi()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        sanPhamMoiModel -> {
+                            if (sanPhamMoiModel.isSuccess()) {
+                                // ⭐ BƯỚC 3: Không tạo mới Adapter, chỉ cập nhật dữ liệu
+                                mangSpMoi.clear(); // Xóa dữ liệu cũ
+                                mangSpMoi.addAll(sanPhamMoiModel.getResult()); // Thêm dữ liệu mới
+                                spMoiAdapter.notifyDataSetChanged(); // Thông báo cho Adapter biết dữ liệu đã thay đổi
+                            }
+                        },
+                        throwable -> {
+                            Toast.makeText(getApplicationContext(), "Không kết nối được server: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                ));
+    }
+
+    // ... Toàn bộ các hàm còn lại (getLoaiSanPham, getToken, onResume, v.v...) giữ nguyên như file của bạn ...
+    // Không cần thay đổi gì ở các hàm này.
 
     private void getToken() {
         FirebaseMessaging.getInstance().getToken()
                 .addOnSuccessListener(token -> {
                     if (!TextUtils.isEmpty(token)) {
                         Log.d("FCM_TOKEN", "Token của thiết bị: " + token);
-                        // Chỉ cập nhật token nếu người dùng đã đăng nhập
                         if (Utils.user_current != null && Utils.user_current.getId() != 0) {
                             updateFcmTokenOnServer(token);
                         }
@@ -129,79 +182,43 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Bây giờ dòng code này sẽ không còn báo lỗi
         User user = Paper.book().read("user");
         if (user != null) {
-            // Cập nhật lại biến toàn cục
             Utils.user_current = user;
             Log.d("MainActivity", "onResume: User updated - " + Utils.user_current.getHoten());
         }
     }
 
-
-    @Override
-    public void onClick(View view, int pos, boolean isLongClick) {
-        if (!isLongClick) {
-            SanPhamMoi sanPhamDaClick = mangSpMoi.get(pos);
-            Intent intent = new Intent(MainActivity.this, ChiTietActivity.class);
-            intent.putExtra("chitiet", sanPhamDaClick);
-            startActivity(intent);
-        }
-    }
-
     private void getEventClick() {
-        listViewManHinhChinh.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
-                switch (i) {
-                    case 0:
-                        Intent trangchu = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(trangchu);
-                        break;
-                    case 1:
-                        Intent ao = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                        ao.putExtra("idloaisanpham", 2);
-                        startActivity(ao);
-                        break;
-                    case 2:
-                        Intent quan = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                        quan.putExtra("idloaisanpham", 3);
-                        startActivity(quan);
-                        break;
-                    case 3:
-                        Intent giay = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                        giay.putExtra("idloaisanpham", 4);
-                        startActivity(giay);
-                        break;
-                    case 4:
-                        Intent phukien = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                        phukien.putExtra("idloaisanpham", 5);
-                        startActivity(phukien);
-                        break;
-                }
+        listViewManHinhChinh.setOnItemClickListener((parent, view, i, l) -> {
+            switch (i) {
+                case 0:
+                    Intent trangchu = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(trangchu);
+                    break;
+                case 1:
+                    Intent ao = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                    ao.putExtra("idloaisanpham", 2);
+                    startActivity(ao);
+                    break;
+                case 2:
+                    Intent quan = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                    quan.putExtra("idloaisanpham", 3);
+                    startActivity(quan);
+                    break;
+                case 3:
+                    Intent giay = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                    giay.putExtra("idloaisanpham", 4);
+                    startActivity(giay);
+                    break;
+                case 4:
+                    Intent phukien = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
+                    phukien.putExtra("idloaisanpham", 5);
+                    startActivity(phukien);
+                    break;
             }
         });
     }
-
-    private void getSpMoi() {
-        compositeDisposable.add(apiBanHang.getSpMoi()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        sanPhamMoiModel -> {
-                            if (sanPhamMoiModel.isSuccess()) {
-                                mangSpMoi = sanPhamMoiModel.getResult();
-                                spMoiAdapter = new SanPhamMoiAdapter(getApplicationContext(), mangSpMoi, this);
-                                recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
-                            }
-                        },
-                        throwable -> {
-                            Toast.makeText(getApplicationContext(), "Không kết nối được server" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                ));
-    }
-
 
     private void getLoaiSanPham() {
         compositeDisposable.add(apiBanHang.getLoaiSp()
@@ -210,9 +227,16 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
                 .subscribe(
                         loaiSpModel -> {
                             if (loaiSpModel.isSuccess()) {
-                                mangloaisp = loaiSpModel.getResult();
-                                loaiSpAdapter = new LoaiSpAdapter(mangloaisp, getApplicationContext());
-                                listViewManHinhChinh.setAdapter(loaiSpAdapter);
+                                // Sửa lại cách khởi tạo LoaiSpAdapter cho đúng
+                                mangloaisp.clear();
+                                mangloaisp.addAll(loaiSpModel.getResult());
+                                // Khởi tạo nếu chưa có, hoặc cập nhật nếu đã có
+                                if (loaiSpAdapter == null) {
+                                    loaiSpAdapter = new LoaiSpAdapter(mangloaisp, getApplicationContext());
+                                    listViewManHinhChinh.setAdapter(loaiSpAdapter);
+                                } else {
+                                    loaiSpAdapter.notifyDataSetChanged();
+                                }
                             }
                         },
                         throwable -> {
@@ -227,9 +251,9 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         mangquangcao.add("https://zerdio.com.vn/wp-content/uploads/2023/03/trang-phuc-phong-cach-quy-ong.jpg");
         mangquangcao.add("https://simg.zalopay.com.vn/zlp-website/assets/dior_1_d854899ea3.jpg");
         mangquangcao.add("https://pos.nvncdn.com/650b61-144700/art/artCT/20240529_vDnzQ1np.jpg");
-        for (int i = 0; i < mangquangcao.size(); i++) {
+        for (String url : mangquangcao) {
             ImageView imageView = new ImageView(getApplicationContext());
-            Picasso.get().load(mangquangcao.get(i)).into(imageView);
+            Picasso.get().load(url).into(imageView);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             viewFlipper.addView(imageView);
         }
@@ -260,20 +284,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         }
     }
 
-    private void Anhxa() {
-        toolbar = findViewById(R.id.toobarmanhinhchinh);
-        viewFlipper = findViewById(R.id.viewflipper);
-        recyclerViewmanhinhchinh = findViewById(R.id.recycleview);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-        recyclerViewmanhinhchinh.setLayoutManager(layoutManager);
-        recyclerViewmanhinhchinh.setHasFixedSize(true);
-        navigationView = findViewById(R.id.navigationview);
-        listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
-        drawerLayout = findViewById(R.id.drawerlayout);
-        mangloaisp = new ArrayList<>();
-        mangSpMoi = new ArrayList<>();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -283,29 +293,22 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.menu_giohang) {
-            Intent cartIntent = new Intent(getApplicationContext(), GioHangActivity.class);
-            startActivity(cartIntent);
+            startActivity(new Intent(getApplicationContext(), GioHangActivity.class));
             return true;
         } else if (id == R.id.search) {
-            Intent searchIntent = new Intent(this, SearchActivity.class);
-            startActivity(searchIntent);
+            startActivity(new Intent(this, SearchActivity.class));
             return true;
         } else if (id == R.id.menu_chat) {
-            Intent adminListIntent = new Intent(getApplicationContext(), AdminListActivity.class);
-            startActivity(adminListIntent);
+            startActivity(new Intent(getApplicationContext(), AdminListActivity.class));
             return true;
         } else if (id == R.id.menu_donhang) {
-            Intent orderIntent = new Intent(this, XemDonHangActivity.class);
-            startActivity(orderIntent);
+            startActivity(new Intent(this, XemDonHangActivity.class));
             return true;
         } else if (id == R.id.menu_hoso) {
-            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-            startActivity(profileIntent);
+            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

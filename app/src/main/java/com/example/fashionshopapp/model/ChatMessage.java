@@ -9,16 +9,18 @@ public class ChatMessage {
     public String content;
     public Date created_at;
     public String conversationKey; // Giữ lại trường này
+    public boolean read;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String sender_id, String receiver_id, String content, Date created_at, String conversationKey) {
+    public ChatMessage(String sender_id, String receiver_id, String content, Date created_at, String conversationKey, boolean read) {
         this.sender_id = sender_id;
         this.receiver_id = receiver_id;
         this.content = content;
         this.created_at = created_at;
         this.conversationKey = conversationKey;
+        this.read = read;
     }
 
     public String getSender_id() {
@@ -59,6 +61,14 @@ public class ChatMessage {
 
     public void setConversationKey(String conversationKey) {
         this.conversationKey = conversationKey;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }
     
