@@ -2,33 +2,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-
-
     <item
         android:id="@+id/search"
         android:title="Search"
         android:icon="@drawable/search_3"
         app:showAsAction="always" />
+
+    <!-- THAY THẾ ITEM CHAT CŨ BẰNG KHỐI NÀY -->
     <item
         android:id="@+id/menu_chat"
-        android:icon="@drawable/send_1"
         android:title="Chat"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        app:actionLayout="@layout/menu_item_chat_layout" />
+
     <item
         android:id="@+id/menu_giohang"
         android:title="Giỏ hàng"
         android:icon="@drawable/shopping_cart_1"
         app:showAsAction="always" />
-    <!-- res/menu/menu_main.xml -->
+
     <item
         android:id="@+id/menu_donhang"
         android:title="Lịch sử đơn hàng"
         app:showAsAction="never"/>
+
     <item
         android:id="@+id/menu_hoso"
         android:title="Hồ sơ cá nhân"
         app:showAsAction="never"/>
 
 </menu>
-    

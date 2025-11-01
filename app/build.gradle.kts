@@ -81,4 +81,7 @@ dependencies {
     implementation("org.greenrobot:eventbus:3.2.0")
     implementation("io.github.pilgr:paperdb:2.7.1")
     implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    implementation("org.greenrobot:eventbus:3.3.1")
+
 }

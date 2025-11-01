@@ -20,6 +20,8 @@ import com.example.fashionshopapp.util.Utils;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,18 +46,17 @@ public class ChatActivity extends AppCompatActivity {
     private String targetAdminId;
     private String targetAdminName;
     private String conversationKey;
+    private boolean isFirstLoad = true; // Biến cờ để chỉ chạy markAsRead một lần
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Nhận dữ liệu từ AdminListActivity
         Intent intent = getIntent();
         targetAdminId = intent.getStringExtra("admin_id");
         targetAdminName = intent.getStringExtra("admin_name");
 
-        // Kiểm tra điều kiện cần thiết để chat
         if (Utils.user_current == null || Utils.user_current.getId() == 0) {
             Toast.makeText(this, "Vui lòng đăng nhập để sử dụng tính năng này", Toast.LENGTH_SHORT).show();
             finish();
@@ -75,77 +76,27 @@ public class ChatActivity extends AppCompatActivity {
         generateConversationKey();
         listenMessages();
     }
-
-    private void initView() {
-        recyclerViewChat = findViewById(R.id.recycleview_chat);
-        edtInputText = findViewById(R.id.edtinputtext);
-        imageSend = findViewById(R.id.imagechat);
-        toolbar = findViewById(R.id.toolbar_chat);
-
-        db = FirebaseFirestore.getInstance();
-        chatMessageList = new ArrayList<>();
-        // Giả sử bạn đã có ChatAdapter
-        chatAdapter = new ChatAdapter(this, chatMessageList, currentUserId);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerViewChat.setLayoutManager(layoutManager);
-        recyclerViewChat.setAdapter(chatAdapter);
-    }
-
-    private void setupToolbar() {
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-            String title = (targetAdminName != null && !targetAdminName.isEmpty()) ? targetAdminName : "Hỗ trợ";
-            getSupportActionBar().setTitle("Chat với " + title);
-
-            toolbar.setNavigationOnClickListener(v -> finish());
-        }
-    }
-
-    private void initControl() {
-        imageSend.setOnClickListener(v -> {
-            String messageText = edtInputText.getText().toString().trim();
-            if (!TextUtils.isEmpty(messageText)) {
-                sendMessage(messageText);
-            }
-        });
-    }
-
-    private void generateConversationKey() {
-        // Luôn đặt ID có giá trị số nhỏ hơn lên trước để đảm bảo key là duy nhất
-        if (Integer.parseInt(currentUserId) < Integer.parseInt(targetAdminId)) {
-            conversationKey = currentUserId + "_" + targetAdminId;
-        } else {
-            conversationKey = targetAdminId + "_" + currentUserId;
-        }
-        Log.d(TAG, "Generated ConversationKey: " + conversationKey);
-    }
-
-    private void sendMessage(String messageText) {
-        imageSend.setEnabled(false);
-
-        Map<String, Object> message = new HashMap<>();
-        message.put("sender_id", currentUserId);
-
-        message.put("receiver_id", targetAdminId);
-        message.put("content", messageText);
-        message.put("created_at", new Date());
-        message.put("conversationKey", conversationKey);
-        message.put("read", false);
-
-        db.collection("messages").add(message)
-                .addOnSuccessListener(documentReference -> {
-                    edtInputText.setText("");
-                    imageSend.setEnabled(true);
-                    recyclerViewChat.scrollToPosition(chatMessageList.size() - 1);
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(ChatActivity.this, "Gửi tin nhắn thất bại", Toast.LENGTH_SHORT).show();
-                    imageSend.setEnabled(true);
-                    Log.e(TAG, "Lỗi khi gửi tin nhắn", e);
+    private void markMessagesAsRead() {
+        db.collection("messages")
+                // Chỉ lấy các tin nhắn trong cuộc hội thoại này
+                .whereEqualTo("conversationKey", this.conversationKey)
+                // Chỉ lấy các tin nhắn mà MÌNH LÀ NGƯỜI NHẬN
+                .whereEqualTo("receiver_id", this.currentUserId)
+                // Chỉ lấy các tin nhắn CHƯA ĐỌC
+                .whereEqualTo("read", false)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Dùng WriteBatch để cập nhật nhiều document cùng lúc cho hiệu quả
+                    WriteBatch batch = db.batch();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        batch.update(document.getReference(), "read", true);
+                    }
+                    // Commit tất cả thay đổi lên server
+                    batch.commit().addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Đã đánh dấu " + queryDocumentSnapshots.size() + " tin nhắn là đã đọc.");
+                    }).addOnFailureListener(e -> {
+                        Log.w(TAG, "Lỗi khi đánh dấu đã đọc.", e);
+                    });
                 });
     }
 
@@ -160,19 +111,105 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     if (value != null) {
+                        int oldSize = chatMessageList.size(); // Kích thước cũ của list
                         for (DocumentChange docChange : value.getDocumentChanges()) {
                             if (docChange.getType() == DocumentChange.Type.ADDED) {
+                                // Tránh thêm trùng lặp
                                 ChatMessage chatMessage = docChange.getDocument().toObject(ChatMessage.class);
-                                chatMessageList.add(chatMessage);
+                                if (!isMessageInList(chatMessage.sender_id, chatMessage.created_at)) {
+                                    chatMessageList.add(chatMessage);
+                                }
                             }
                         }
-                        // Sắp xếp lại danh sách một lần cuối để đảm bảo thứ tự
                         chatMessageList.sort((o1, o2) -> o1.getCreated_at().compareTo(o2.getCreated_at()));
-                        chatAdapter.notifyDataSetChanged();
-                        if (!chatMessageList.isEmpty()) {
+
+                        if (chatMessageList.size() > oldSize || isFirstLoad) {
+                            chatAdapter.notifyDataSetChanged();
                             recyclerViewChat.scrollToPosition(chatMessageList.size() - 1);
                         }
+
+                        if (isFirstLoad) {
+                            markMessagesAsRead();
+                            isFirstLoad = false;
+                        }
                     }
+                });
+    }
+
+    private boolean isMessageInList(String senderId, Date createdAt) {
+        for (ChatMessage msg : chatMessageList) {
+            if (msg.getSender_id().equals(senderId) && msg.getCreated_at().equals(createdAt)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ---------- CÁC HÀM CŨ (KHÔNG THAY ĐỔI) ----------
+
+    private void initView() {
+        recyclerViewChat = findViewById(R.id.recycleview_chat);
+        edtInputText = findViewById(R.id.edtinputtext);
+        imageSend = findViewById(R.id.imagechat);
+        toolbar = findViewById(R.id.toolbar_chat);
+
+        db = FirebaseFirestore.getInstance();
+        chatMessageList = new ArrayList<>();
+        chatAdapter = new ChatAdapter(this, chatMessageList, currentUserId);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerViewChat.setLayoutManager(layoutManager);
+        recyclerViewChat.setAdapter(chatAdapter);
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            String title = (targetAdminName != null && !targetAdminName.isEmpty()) ? targetAdminName : "Hỗ trợ";
+            getSupportActionBar().setTitle("Chat với " + title);
+            toolbar.setNavigationOnClickListener(v -> finish());
+        }
+    }
+
+    private void initControl() {
+        imageSend.setOnClickListener(v -> {
+            String messageText = edtInputText.getText().toString().trim();
+            if (!TextUtils.isEmpty(messageText)) {
+                sendMessage(messageText);
+            }
+        });
+    }
+
+    private void generateConversationKey() {
+        if (Integer.parseInt(currentUserId) < Integer.parseInt(targetAdminId)) {
+            conversationKey = currentUserId + "_" + targetAdminId;
+        } else {
+            conversationKey = targetAdminId + "_" + currentUserId;
+        }
+        Log.d(TAG, "Generated ConversationKey: " + conversationKey);
+    }
+
+    private void sendMessage(String messageText) {
+        imageSend.setEnabled(false);
+        Map<String, Object> message = new HashMap<>();
+        message.put("sender_id", currentUserId);
+        message.put("receiver_id", targetAdminId);
+        message.put("content", messageText);
+        message.put("created_at", new Date());
+        message.put("conversationKey", conversationKey);
+        message.put("read", false);
+
+        db.collection("messages").add(message)
+                .addOnSuccessListener(documentReference -> {
+                    edtInputText.setText("");
+                    imageSend.setEnabled(true);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ChatActivity.this, "Gửi tin nhắn thất bại", Toast.LENGTH_SHORT).show();
+                    imageSend.setEnabled(true);
+                    Log.e(TAG, "Lỗi khi gửi tin nhắn", e);
                 });
     }
 }

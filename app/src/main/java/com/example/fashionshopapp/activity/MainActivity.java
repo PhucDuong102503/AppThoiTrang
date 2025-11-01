@@ -5,19 +5,17 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +25,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fashionshopapp.Interface.ItemClickListener;
 import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.adapter.LoaiSpAdapter;
 import com.example.fashionshopapp.adapter.SanPhamMoiAdapter;
@@ -38,7 +35,10 @@ import com.example.fashionshopapp.retrofit.ApiBanHang;
 import com.example.fashionshopapp.retrofit.RetrofitClient;
 import com.example.fashionshopapp.util.Utils;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.nex3z.notificationbadge.NotificationBadge;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -49,7 +49,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-// ⭐ BƯỚC 1: Bỏ implements ItemClickListener không cần thiết nữa
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -59,23 +58,25 @@ public class MainActivity extends AppCompatActivity {
     ListView listViewManHinhChinh;
     DrawerLayout drawerLayout;
 
-    // Các thành phần cho Loại Sản Phẩm
     LoaiSpAdapter loaiSpAdapter;
     List<Loaisp> mangloaisp;
 
-    // Các thành phần cho Sản Phẩm Mới
     SanPhamMoiAdapter spMoiAdapter;
     List<SanPhamMoi> mangSpMoi;
 
-    // Quản lý API calls
     ApiBanHang apiBanHang;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    NotificationBadge badge;
+    FirebaseFirestore db;
+    ListenerRegistration unreadListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = FirebaseFirestore.getInstance();
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
         Paper.init(this);
 
@@ -88,10 +89,117 @@ public class MainActivity extends AppCompatActivity {
             getSpMoi();
             getEventClick();
             getToken();
+            listenForUnreadMessages();
         } else {
             Toast.makeText(getApplicationContext(), "Không có kết nối mạng", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void listenForUnreadMessages() {
+        // Chỉ lắng nghe khi người dùng đã đăng nhập
+        if (Utils.user_current == null || Utils.user_current.getId() == 0) {
+            updateBadge(0); // Đảm bảo badge trống nếu chưa đăng nhập
+            return;
+        }
+
+        String currentUserId = String.valueOf(Utils.user_current.getId());
+
+        // Nếu đã có listener cũ, hãy hủy nó đi để tránh chạy nhiều lần
+        if (unreadListener != null) {
+            unreadListener.remove();
+        }
+
+        unreadListener = db.collection("messages")
+                .whereEqualTo("receiver_id", currentUserId)
+                .whereEqualTo("read", false)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null) {
+                        Log.w("FirestoreListener", "Listen failed.", error);
+                        return;
+                    }
+
+                    if (snapshots != null) {
+                        // Lấy số lượng document thỏa mãn điều kiện
+                        int unreadCount = snapshots.size();
+                        Log.d("FirestoreListener", "Unread count: " + unreadCount);
+                        // Cập nhật badge
+                        updateBadge(unreadCount);
+                    } else {
+                        updateBadge(0);
+                    }
+                });
+    }
+
+    private void updateBadge(int count) {
+        if (badge != null) {
+            if (count > 0) {
+                badge.setVisibility(View.VISIBLE);
+                badge.setNumber(count);
+            } else {
+                badge.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    // GỌI LẠI listenForUnreadMessages KHI USER QUAY LẠI APP ĐỂ ĐẢM BẢO
+    // USER ĐƯỢC CẬP NHẬT (SAU KHI ĐĂNG NHẬP/ĐĂNG XUẤT)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        User user = Paper.book().read("user");
+        if (user != null) {
+            Utils.user_current = user;
+        }
+        // Lắng nghe lại để cập nhật badge theo user_current mới nhất
+        listenForUnreadMessages();
+    }
+
+    // RẤT QUAN TRỌNG: HỦY LISTENER KHI ACTIVITY BỊ HỦY
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+        if (unreadListener != null) {
+            unreadListener.remove();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        final MenuItem menuItem = menu.findItem(R.id.menu_chat);
+        View actionView = menuItem.getActionView();
+        actionView.setOnClickListener(v -> onOptionsItemSelected(menuItem));
+        badge = actionView.findViewById(R.id.badge);
+        // Cập nhật badge lần đầu tiên khi menu được tạo
+        listenForUnreadMessages();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_giohang) {
+            startActivity(new Intent(getApplicationContext(), GioHangActivity.class));
+            return true;
+        } else if (id == R.id.search) {
+            startActivity(new Intent(this, SearchActivity.class));
+            return true;
+        } else if (id == R.id.menu_chat) {
+            // Logic reset badge đã được chuyển vào ChatActivity
+            startActivity(new Intent(getApplicationContext(), AdminListActivity.class));
+            return true;
+        } else if (id == R.id.menu_donhang) {
+            startActivity(new Intent(this, XemDonHangActivity.class));
+            return true;
+        } else if (id == R.id.menu_hoso) {
+            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ---------- CÁC HÀM CŨ (KHÔNG THAY ĐỔI) ----------
 
     private void Anhxa() {
         toolbar = findViewById(R.id.toobarmanhinhchinh);
@@ -101,28 +209,22 @@ public class MainActivity extends AppCompatActivity {
         listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
         drawerLayout = findViewById(R.id.drawerlayout);
 
-        // Khởi tạo list
         mangloaisp = new ArrayList<>();
         mangSpMoi = new ArrayList<>();
 
-        // ⭐ BƯỚC 2: Khởi tạo Adapter ngay từ đầu với một danh sách rỗng
-        // và định nghĩa ItemClickListener ngay tại đây.
         spMoiAdapter = new SanPhamMoiAdapter(this, mangSpMoi, (view, pos, isLongClick) -> {
             if (!isLongClick) {
-                // Lấy sản phẩm được click từ danh sách
                 SanPhamMoi sanPhamDaClick = mangSpMoi.get(pos);
-                // Tạo Intent và truyền dữ liệu
                 Intent intent = new Intent(MainActivity.this, ChiTietActivity.class);
                 intent.putExtra("chitiet", sanPhamDaClick);
                 startActivity(intent);
             }
         });
 
-        // Cấu hình RecyclerView cho Sản Phẩm Mới
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerViewmanhinhchinh.setLayoutManager(layoutManager);
         recyclerViewmanhinhchinh.setHasFixedSize(true);
-        recyclerViewmanhinhchinh.setAdapter(spMoiAdapter); // Gán adapter cho RecyclerView ngay lập tức
+        recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
     }
 
     private void getSpMoi() {
@@ -132,20 +234,14 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(
                         sanPhamMoiModel -> {
                             if (sanPhamMoiModel.isSuccess()) {
-                                // ⭐ BƯỚC 3: Không tạo mới Adapter, chỉ cập nhật dữ liệu
-                                mangSpMoi.clear(); // Xóa dữ liệu cũ
-                                mangSpMoi.addAll(sanPhamMoiModel.getResult()); // Thêm dữ liệu mới
-                                spMoiAdapter.notifyDataSetChanged(); // Thông báo cho Adapter biết dữ liệu đã thay đổi
+                                mangSpMoi.clear();
+                                mangSpMoi.addAll(sanPhamMoiModel.getResult());
+                                spMoiAdapter.notifyDataSetChanged();
                             }
                         },
-                        throwable -> {
-                            Toast.makeText(getApplicationContext(), "Không kết nối được server: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        throwable -> Toast.makeText(getApplicationContext(), "Không kết nối được server: " + throwable.getMessage(), Toast.LENGTH_SHORT).show()
                 ));
     }
-
-    // ... Toàn bộ các hàm còn lại (getLoaiSanPham, getToken, onResume, v.v...) giữ nguyên như file của bạn ...
-    // Không cần thay đổi gì ở các hàm này.
 
     private void getToken() {
         FirebaseMessaging.getInstance().getToken()
@@ -173,48 +269,27 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("FCM_TOKEN", "Cập nhật token thất bại: " + response.getMessage());
                             }
                         },
-                        throwable -> {
-                            Log.e("FCM_TOKEN", "Lỗi khi cập nhật token: ", throwable);
-                        }
+                        throwable -> Log.e("FCM_TOKEN", "Lỗi khi cập nhật token: ", throwable)
                 ));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        User user = Paper.book().read("user");
-        if (user != null) {
-            Utils.user_current = user;
-            Log.d("MainActivity", "onResume: User updated - " + Utils.user_current.getHoten());
-        }
     }
 
     private void getEventClick() {
         listViewManHinhChinh.setOnItemClickListener((parent, view, i, l) -> {
             switch (i) {
                 case 0:
-                    Intent trangchu = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(trangchu);
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     break;
                 case 1:
-                    Intent ao = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                    ao.putExtra("idloaisanpham", 2);
-                    startActivity(ao);
+                    startActivity(new Intent(getApplicationContext(), LoadMoreSpActivity.class).putExtra("idloaisanpham", 2));
                     break;
                 case 2:
-                    Intent quan = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                    quan.putExtra("idloaisanpham", 3);
-                    startActivity(quan);
+                    startActivity(new Intent(getApplicationContext(), LoadMoreSpActivity.class).putExtra("idloaisanpham", 3));
                     break;
                 case 3:
-                    Intent giay = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                    giay.putExtra("idloaisanpham", 4);
-                    startActivity(giay);
+                    startActivity(new Intent(getApplicationContext(), LoadMoreSpActivity.class).putExtra("idloaisanpham", 4));
                     break;
                 case 4:
-                    Intent phukien = new Intent(getApplicationContext(), LoadMoreSpActivity.class);
-                    phukien.putExtra("idloaisanpham", 5);
-                    startActivity(phukien);
+                    startActivity(new Intent(getApplicationContext(), LoadMoreSpActivity.class).putExtra("idloaisanpham", 5));
                     break;
             }
         });
@@ -227,10 +302,8 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(
                         loaiSpModel -> {
                             if (loaiSpModel.isSuccess()) {
-                                // Sửa lại cách khởi tạo LoaiSpAdapter cho đúng
                                 mangloaisp.clear();
                                 mangloaisp.addAll(loaiSpModel.getResult());
-                                // Khởi tạo nếu chưa có, hoặc cập nhật nếu đã có
                                 if (loaiSpAdapter == null) {
                                     loaiSpAdapter = new LoaiSpAdapter(mangloaisp, getApplicationContext());
                                     listViewManHinhChinh.setAdapter(loaiSpAdapter);
@@ -239,9 +312,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         },
-                        throwable -> {
-                            Log.d("error", throwable.getMessage());
-                        }
+                        throwable -> Log.d("error", throwable.getMessage())
                 ));
     }
 
@@ -277,44 +348,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void ActionBar() {
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             toolbar.setNavigationIcon(android.R.drawable.ic_menu_sort_by_size);
             toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_giohang) {
-            startActivity(new Intent(getApplicationContext(), GioHangActivity.class));
-            return true;
-        } else if (id == R.id.search) {
-            startActivity(new Intent(this, SearchActivity.class));
-            return true;
-        } else if (id == R.id.menu_chat) {
-            startActivity(new Intent(getApplicationContext(), AdminListActivity.class));
-            return true;
-        } else if (id == R.id.menu_donhang) {
-            startActivity(new Intent(this, XemDonHangActivity.class));
-            return true;
-        } else if (id == R.id.menu_hoso) {
-            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        compositeDisposable.clear();
-        super.onDestroy();
     }
 }
