@@ -186,11 +186,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, SearchActivity.class));
             return true;
         } else if (id == R.id.menu_chat) {
-            // Logic reset badge đã được chuyển vào ChatActivity
             startActivity(new Intent(getApplicationContext(), AdminListActivity.class));
             return true;
         } else if (id == R.id.menu_donhang) {
-            startActivity(new Intent(this, XemDonHangActivity.class));
+            // ⭐⭐⭐ SỬA LỖI TẠI ĐÂY ⭐⭐⭐
+            // Đổi từ XemDonHangActivity sang DonHangActivity để hiển thị giao diện 3 tab
+            startActivity(new Intent(this, DonHangActivity.class));
             return true;
         } else if (id == R.id.menu_hoso) {
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));

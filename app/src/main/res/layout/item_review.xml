@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Ảnh đại diện người dùng -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/review_user_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/profile" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Tên người dùng -->
+        <TextView
+            android:id="@+id/review_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            tools:text="Nguyễn Văn A" />
+
+        <!-- RatingBar để hiển thị số sao -->
+        <RatingBar
+            android:id="@+id/review_rating_bar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:theme="@style/RatingBar" />
+
+        <!-- Nội dung bình luận -->
+        <TextView
+            android:id="@+id/review_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Sản phẩm rất đẹp, chất vải tốt, giao hàng nhanh chóng. Sẽ ủng hộ shop lần sau." />
+
+        <!-- Ngày đánh giá -->
+        <TextView
+            android:id="@+id/review_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"
+            tools:text="02/11/2025" />
+    </LinearLayout>
+
+</LinearLayout>

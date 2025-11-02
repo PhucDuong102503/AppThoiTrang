@@ -1,9 +1,9 @@
-package com.example.fashionshopapp.adapter;
-
-import android.content.Context;
+package com.example.fashionshopapp.adapter;import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,64 +12,88 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.fashionshopapp.R;
-// ⭐ QUAN TRỌNG: Đổi import từ GioHang sang Item
+import com.example.fashionshopapp.activity.WriteReviewActivity;
+import com.example.fashionshopapp.model.DonHang;
 import com.example.fashionshopapp.model.Item;
+import com.example.fashionshopapp.model.SanPhamMoi;
+import com.example.fashionshopapp.util.Utils;
 
 import java.util.List;
 
-// ⭐ ĐÃ SỬA ĐỂ LÀM VIỆC VỚI List<Item>
 public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAdapter.MyViewHolder> {
 
     private final Context context;
-    // ⭐ Sửa kiểu dữ liệu của list
     private final List<Item> itemList;
+    private final DonHang donHang; // ⭐ BIẾN QUAN TRỌNG: Lưu thông tin đơn hàng cha
 
-    // ⭐ Sửa constructor để nhận List<Item>
-    public ChiTietDonHangAdapter(Context context, List<Item> itemList) {
+    // ⭐ SỬA CONSTRUCTOR: Nhận thêm đối tượng DonHang
+    public ChiTietDonHangAdapter(Context context, List<Item> itemList, DonHang donHang) {
         this.context = context;
         this.itemList = itemList;
+        this.donHang = donHang; // Lưu lại
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Dùng lại layout item_thanhtoan vì nó phù hợp
+        // Layout này cần có Button với id là 'btn_item_danhgia'
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_thanhtoan, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        // ⭐ Giờ đây 'item' là đối tượng của lớp Item
         Item item = itemList.get(position);
 
-        // ⭐ Lấy tên sản phẩm từ getTensanpham() của model Item
         holder.txtTenSp.setText(item.getTensanpham());
-        holder.txtSoLuong.setText("Số lượng: " + item.getSoluong());
+        holder.txtSoLuong.setText("x" + item.getSoluong());
 
-        // ⭐ Lấy ảnh từ getHinhanhsanpham() của model Item
-        Glide.with(context)
-                .load(item.getHinhanhsanpham())
-                .placeholder(R.drawable.ic_media_24)
-                .into(holder.imgAnh);
+        String imageUrl = item.getHinhanhsanpham();
+        // Giả sử API trả về đường dẫn tương đối
+        if (imageUrl != null && !imageUrl.startsWith("http")) {
+            imageUrl = Utils.BASE_URL + "images/" + imageUrl;
+        }
+        Glide.with(context).load(imageUrl).placeholder(R.drawable.ic_media_24).into(holder.imgAnh);
 
-        // ⭐ Lấy tên size từ getTensize() của model Item
         if (item.getTensize() != null && !item.getTensize().isEmpty()) {
             holder.txtSize.setText("Size: " + item.getTensize());
             holder.txtSize.setVisibility(View.VISIBLE);
         } else {
             holder.txtSize.setVisibility(View.GONE);
         }
+
+        // ⭐⭐⭐ LOGIC HIỂN THỊ NÚT ĐÁNH GIÁ ⭐⭐⭐
+        // Chỉ hiển thị nút "Đánh giá" nếu đơn hàng đã giao thành công
+        if (donHang != null && "Đã giao hàng".equals(donHang.getTrangthai())) {
+            holder.btnDanhGia.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnDanhGia.setVisibility(View.GONE);
+        }
+
+        holder.btnDanhGia.setOnClickListener(v -> {
+            Intent intent = new Intent(context, WriteReviewActivity.class);
+
+            SanPhamMoi sanPhamReview = new SanPhamMoi();
+            sanPhamReview.setId(item.getSanpham_id()); // Cần có getSanpham_id() trong model Item
+            sanPhamReview.setTensanpham(item.getTensanpham());
+            sanPhamReview.setHinhanhsanpham(item.getHinhanhsanpham());
+
+            intent.putExtra("san_pham_review", sanPhamReview);
+            intent.putExtra("don_hang_id", donHang.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
+        if (itemList == null) return 0;
         return itemList.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAnh;
         TextView txtTenSp, txtSize, txtSoLuong;
+        Button btnDanhGia; // ⭐ ÁNH XẠ NÚT
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +101,7 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
             txtTenSp = itemView.findViewById(R.id.item_thanhtoan_tensp);
             txtSize = itemView.findViewById(R.id.item_thanhtoan_size);
             txtSoLuong = itemView.findViewById(R.id.item_thanhtoan_soluong);
+            btnDanhGia = itemView.findViewById(R.id.btn_item_danhgia); // ⭐ ÁNH XẠ NÚT
         }
     }
 }

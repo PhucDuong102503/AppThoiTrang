@@ -20,5 +20,10 @@
 
     </style>
 
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/light_gray</item> <!-- Màu của ngôi sao trống -->
+        <item name="colorControlActivated">@color/gold</item>    <!-- Màu của ngôi sao được chọn -->
+    </style>
+
     <style name="Theme.FashionShopApp" parent="Base.Theme.FashionShopApp" />
 </resources>

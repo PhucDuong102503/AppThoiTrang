@@ -11,5 +11,7 @@
     <color name="red_700">#FFB00020</color>FF5722
     <color name="clolortext">#FF5722</color>
     <color name="blue">#169EDC</color>
+    <color name="light_gray">#D3D3D3</color>
+    <color name="gold">#FFD700</color>
 
 </resources>

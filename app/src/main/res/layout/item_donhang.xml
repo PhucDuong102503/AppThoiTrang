@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp"
     android:orientation="vertical"
     android:padding="12dp">
@@ -87,5 +88,13 @@
         android:text="Hủy Đơn Hàng"
         android:textSize="12sp"
         android:visibility="gone" />
+    <Button
+        android:id="@+id/btn_review_item"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Đánh giá"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
 </LinearLayout>

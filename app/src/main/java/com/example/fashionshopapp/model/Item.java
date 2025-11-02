@@ -5,14 +5,30 @@ import java.io.Serializable;
 // Model này chỉ dùng để chứa thông tin của một sản phẩm trong chi tiết đơn hàng
 public class Item implements Serializable {
     // Các trường này phải khớp với JSON trả về từ file xemdonhang.php
+
+    // ⭐⭐⭐ THÊM TRƯỜNG NÀY VÀO ⭐⭐⭐
+    private int sanpham_id;
+
     private String tensanpham;
     private String hinhanhsanpham;
     private int soluong;
     private double gia;
     private String tensize;
 
+
     // --- Getters và Setters ---
 
+    // ⭐⭐⭐ THÊM CÁC HÀM GETTER/SETTER NÀY VÀO ⭐⭐⭐
+    public int getSanpham_id() {
+        return sanpham_id;
+    }
+
+    public void setSanpham_id(int sanpham_id) {
+        this.sanpham_id = sanpham_id;
+    }
+
+
+    // --- Các hàm cũ giữ nguyên ---
     public String getTensanpham() {
         return tensanpham;
     }

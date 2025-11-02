@@ -44,8 +44,10 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        // Lấy ra đối tượng DonHang tương ứng với vị trí item
         DonHang donHang = listDonHang.get(position);
 
+        // --- Phần hiển thị thông tin chung của đơn hàng (giữ nguyên) ---
         holder.txtMaDonHang.setText("Đơn hàng #" + donHang.getId());
         holder.txtTrangThai.setText(donHang.getTrangthai());
         holder.txtNgayDat.setText("Ngày đặt: " + donHang.getNgaydathang());
@@ -58,6 +60,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
             holder.txtTongTien.setText("Tổng tiền: " + donHang.getTongtien() + "đ");
         }
 
+        // --- Logic hiển thị nút Hủy đơn (giữ nguyên) ---
         if ("Chờ giao hàng".equals(donHang.getTrangthai())) {
             holder.btnHuyDon.setVisibility(View.VISIBLE);
             holder.btnHuyDon.setOnClickListener(v -> {
@@ -74,18 +77,22 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
             holder.btnHuyDon.setVisibility(View.GONE);
         }
 
-        // Cài đặt RecyclerView con
+        // --- ⭐⭐⭐ SỬA LỖI TẠI ĐÂY: CÀI ĐẶT RECYCLERVIEW CON ⭐⭐⭐ ---
+
+        // 1. Tạo LayoutManager cho RecyclerView con
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 holder.recyclerChiTiet.getContext(),
                 LinearLayoutManager.VERTICAL,
                 false
         );
+        holder.recyclerChiTiet.setLayoutManager(layoutManager); // Set layout manager trước
 
-        // Dòng này bây giờ sẽ không còn lỗi
+        // 2. Kiểm tra xem đơn hàng có danh sách sản phẩm (items) không
         if (donHang.getItems() != null && !donHang.getItems().isEmpty()) {
-            layoutManager.setInitialPrefetchItemCount(donHang.getItems().size());
-            ChiTietDonHangAdapter chiTietAdapter = new ChiTietDonHangAdapter(context, donHang.getItems());
-            holder.recyclerChiTiet.setLayoutManager(layoutManager);
+            // 3. ⭐ SỬA DÒNG NÀY: Khởi tạo ChiTietDonHangAdapter và truyền `donHang` vào
+            ChiTietDonHangAdapter chiTietAdapter = new ChiTietDonHangAdapter(context, donHang.getItems(), donHang);
+
+            // 4. Set Adapter cho RecyclerView con
             holder.recyclerChiTiet.setAdapter(chiTietAdapter);
         }
     }

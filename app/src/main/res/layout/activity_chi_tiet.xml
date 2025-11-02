@@ -58,7 +58,7 @@
                         android:id="@+id/txttenchitietsp"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="Tên sản phẩm rất dài nên cần xuống dòng hợp lý để không tràn"
+                        android:text="Tên sản phẩm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -69,7 +69,7 @@
                         android:textColor="@color/red_200"
                         android:textStyle="bold"
                         android:textSize="15sp"
-                        android:text="Giá: đ250000"
+                        android:text="Giá: 0đ"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -81,18 +81,18 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginTop="8dp">
-                    <TextView
-                        android:text="Size:"
-                        android:textStyle="bold"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        <TextView
+                            android:text="Size:"
+                            android:textStyle="bold"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <Spinner
-                        android:id="@+id/spinnerslsize"
-                        android:layout_marginTop="3dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        <Spinner
+                            android:id="@+id/spinnerslsize"
+                            android:layout_marginTop="3dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -102,18 +102,18 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginTop="8dp">
-                    <TextView
-                        android:text="Số lượng:"
-                        android:textStyle="bold"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        <TextView
+                            android:text="Số lượng:"
+                            android:textStyle="bold"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <Spinner
-                        android:id="@+id/spinnersl"
-                        android:layout_marginTop="3dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        <Spinner
+                            android:id="@+id/spinnersl"
+                            android:layout_marginTop="3dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -133,7 +133,92 @@
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Chi tiết mô tả dài có thể cuộn trong ScrollView..." />
+                android:text="..." />
+
+            <!-- Dải phân cách -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DADADA"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- ⭐ BẮT ĐẦU PHẦN ĐÁNH GIÁ (ĐÃ SỬA) ⭐ -->
+
+            <!-- Tiêu đề và Nút Viết Đánh Giá -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Đánh giá sản phẩm"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+
+                <Button
+                    android:id="@+id/btn_viet_danh_gia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Viết đánh giá"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+            </RelativeLayout>
+
+            <!-- Khu vực Tóm tắt Đánh giá -->
+            <LinearLayout
+                android:id="@+id/layout_summary_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <RatingBar
+                    android:id="@+id/rating_bar_summary"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:stepSize="0.1"
+                    android:theme="@style/RatingBar" />
+
+                <TextView
+                    android:id="@+id/txt_rating_summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"
+                    tools:text="4.5/5 (120 đánh giá)"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_no_reviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chưa có đánh giá nào."
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+
+            <!-- RecyclerView để hiển thị danh sách đánh giá -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycleview_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_review" />
+
+            <!-- ⭐ KẾT THÚC PHẦN ĐÁNH GIÁ ⭐ -->
 
         </LinearLayout>
     </ScrollView>

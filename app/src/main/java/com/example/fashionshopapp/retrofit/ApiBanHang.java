@@ -3,6 +3,7 @@ package com.example.fashionshopapp.retrofit;
 import com.example.fashionshopapp.model.DonHangModel;
 import com.example.fashionshopapp.model.LoaiSpModel;
 import com.example.fashionshopapp.model.MessageModel;
+import com.example.fashionshopapp.model.ReviewModel;
 import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.model.SanPhamSizeModel;
 import com.example.fashionshopapp.model.UserApiResponse;
@@ -114,14 +115,24 @@ Observable<MessageModel> datHang(
             @Part MultipartBody.Part file
     );
 
-    // Trong file ApiBanHang.java
-
     @POST("xemdonhang.php")
     @FormUrlEncoded
     Observable<DonHangModel> xemDonHang(
             @Field("user_id") int user_id,
-            @Field("trangthai") String trangthai
+            @Field("status_id") int status_id // Sửa thành status_id kiểu int
     );
+
+    @POST("danhgiasanpham.php")
+    @FormUrlEncoded
+    Observable<MessageModel> danhGiaSanPham(
+            @Field("user_id") int user_id,
+            @Field("sanpham_id") int sanpham_id,
+            @Field("donhang_id") int donhang_id,
+            @Field("sao") int sao,
+            @Field("binhluan") String binhluan
+    );
+
+
 
     @POST("huydonhang.php")
     @FormUrlEncoded
@@ -146,5 +157,23 @@ Observable<MessageModel> datHang(
     @FormUrlEncoded
     Observable<JsonObject> createVnpayPayment(
             @Field("amount") long amount
+    );
+
+    // API THÊM ĐÁNH GIÁ
+    @POST("add_review.php")
+    @FormUrlEncoded
+    Observable<MessageModel> addReview(
+            @Field("user_id") int user_id,
+            @Field("sanpham_id") int sanpham_id,
+            @Field("donhang_id") int donhang_id,
+            @Field("sao") int sao,
+            @Field("binhluan") String binhluan
+    );
+
+    @POST("get_reviews.php")
+    @FormUrlEncoded
+    Observable<ReviewModel> getReviews(
+            @Field("sanpham_id") int sanpham_id,
+            @Field("page") int page
     );
 }

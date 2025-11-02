@@ -2,7 +2,6 @@ package com.example.fashionshopapp.activity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,12 +20,15 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-// ⭐ LƯU Ý: Activity này chưa có giao diện Tab, nó chỉ hiển thị 1 danh sách duy nhất.
-public class XemDonHangActivity extends AppCompatActivity implements DonHangAdapter.OnHuyDonClickListener { // ⭐ BƯỚC 1: Implement interface
+
+public class XemDonHangActivity extends AppCompatActivity implements DonHangAdapter.OnHuyDonClickListener {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     ApiBanHang apiBanHang;
     RecyclerView recyclerDonHang;
     Toolbar toolbar;
+
+    // Biến để lưu status_id
+    private int statusId = 0; // Mặc định là 0 (Chờ giao hàng)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,27 +36,29 @@ public class XemDonHangActivity extends AppCompatActivity implements DonHangAdap
         setContentView(R.layout.activity_xem_don_hang);
         initView();
         initToolbar();
+        // Lấy status_id từ Intent
+        statusId = getIntent().getIntExtra("status_id", 0);
         getOrderHistory();
     }
 
     private void getOrderHistory() {
-        // Lấy trạng thái từ Intent, nếu không có thì mặc định là "Chờ giao hàng"
-        String trangThai = getIntent().getStringExtra("trangthai_donhang");
-        if (trangThai == null) {
-            trangThai = "Chờ giao hàng";
-        }
+        if (Utils.user_current == null) return;
 
-        compositeDisposable.add(apiBanHang.xemDonHang(Utils.user_current.getId(), trangThai) // Gọi API với trạng thái
+        // ⭐⭐⭐ SỬA LỖI TẠI ĐÂY ⭐⭐⭐
+        // Gọi API với biến statusId (kiểu int) thay vì biến trangThai (kiểu String)
+        compositeDisposable.add(apiBanHang.xemDonHang(Utils.user_current.getId(), statusId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         donHangModel -> {
-                            if (donHangModel.isSuccess()) {
-                                // ⭐ BƯỚC 2: Sửa lại cách tạo Adapter, truyền 'this' làm listener
+                            if (donHangModel.isSuccess() && donHangModel.getResult() != null) {
                                 DonHangAdapter adapter = new DonHangAdapter(this, donHangModel.getResult(), this);
                                 recyclerDonHang.setAdapter(adapter);
                             } else {
-                                Toast.makeText(this, donHangModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                // Xử lý trường hợp không có đơn hàng
+                                Toast.makeText(this, "Không có đơn hàng nào.", Toast.LENGTH_SHORT).show();
+                                // Có thể cần xóa dữ liệu cũ trong adapter nếu có
+                                recyclerDonHang.setAdapter(null);
                             }
                         },
                         throwable -> {
@@ -68,7 +72,20 @@ public class XemDonHangActivity extends AppCompatActivity implements DonHangAdap
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Đơn hàng của tôi");
+            // Sửa tiêu đề cho phù hợp
+            String title = "Đơn hàng của tôi";
+            switch (statusId) {
+                case 0:
+                    title = "Đơn hàng chờ giao";
+                    break;
+                case 1:
+                    title = "Đơn hàng đã giao";
+                    break;
+                case 2:
+                    title = "Đơn hàng đã hủy";
+                    break;
+            }
+            getSupportActionBar().setTitle(title);
         }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
@@ -81,23 +98,20 @@ public class XemDonHangActivity extends AppCompatActivity implements DonHangAdap
         recyclerDonHang.setLayoutManager(layoutManager);
     }
 
-    // ⭐ BƯỚC 3: Override lại phương thức của interface để xử lý sự kiện hủy đơn
     @Override
     public void onHuyDonClick(DonHang donHang) {
-        // Tại đây, bạn sẽ gọi API để hủy đơn hàng
         huyDonHangApi(donHang.getId());
     }
 
     private void huyDonHangApi(int donhang_id) {
-        compositeDisposable.add(apiBanHang.huyDonHang(donhang_id)
+        compositeDisposable.add(apiBanHang.huyDonHang(donhang_id) // Giả sử bạn có API huyDonHang
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         messageModel -> {
                             if (messageModel.isSuccess()) {
                                 Toast.makeText(this, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
-                                // Sau khi hủy thành công, gọi lại API để làm mới danh sách
-                                getOrderHistory();
+                                getOrderHistory(); // Tải lại danh sách
                             } else {
                                 Toast.makeText(this, "Hủy thất bại: " + messageModel.getMessage(), Toast.LENGTH_SHORT).show();
                             }
