@@ -7,6 +7,7 @@ import com.example.fashionshopapp.model.SanPhamMoiModel;
 import com.example.fashionshopapp.model.SanPhamSizeModel;
 import com.example.fashionshopapp.model.UserApiResponse;
 import com.example.fashionshopapp.model.UserModel;
+import com.google.gson.JsonObject;
 
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
@@ -140,4 +141,10 @@ Observable<MessageModel> datHang(
             @Field("fcm_token") String token
     );
 
+    // HÀM MỚI ĐỂ TẠO URL THANH TOÁN VNPAY
+    @POST("vnpay_create_payment.php")
+    @FormUrlEncoded
+    Observable<JsonObject> createVnpayPayment(
+            @Field("amount") long amount
+    );
 }

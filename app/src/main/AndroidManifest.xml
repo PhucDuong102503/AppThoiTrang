@@ -18,7 +18,11 @@
         android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FashionShopApp"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity
+            android:name=".activity.VNPAYActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.AdminListActivity"
             android:exported="false" />

@@ -84,4 +84,9 @@ dependencies {
 
     implementation("org.greenrobot:eventbus:3.3.1")
 
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    // Thư viện để log chi tiết các request mạng
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
 }
