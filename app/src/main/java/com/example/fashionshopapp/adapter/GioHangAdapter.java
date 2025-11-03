@@ -111,7 +111,6 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
         return gioHangList.size();
     }
 
-    // --- SỬA LẠI TÊN BIẾN TRONG MyViewHolder CHO ĐÚNG VỚI FILE LAYOUT CỦA BẠN ---
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAnh, imgXoa;
         TextView txtTenSp, txtGiaSp, txtSoLuong, txtSize; // Bỏ txtTongTien vì nó ở ngoài

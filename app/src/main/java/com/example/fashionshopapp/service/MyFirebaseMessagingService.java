@@ -34,12 +34,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             // Hiển thị notification lên thanh trạng thái
             showNotification(title, body);
 
-            // ⭐ BƯỚC QUAN TRỌNG: Phát đi một sự kiện
+            // Phát đi một sự kiện
             // Bất kỳ thành phần nào đang "lắng nghe" sự kiện này sẽ nhận được nó.
             EventBus.getDefault().post(new MessageEvent());
         }
 
-        // Xử lý data payload nếu có (bạn có thể mở rộng sau)
+        // Xử lý data payload nếu có
         if (remoteMessage.getData().size() > 0) {
             Map<String, String> data = remoteMessage.getData();
             Log.d(TAG, "Data Payload: " + data.toString());
@@ -73,7 +73,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
         Log.d(TAG, "Refreshed token: " + token);
-        // Gửi token này lên server của bạn nếu cần
+        // Gửi token này lên server nếu cần
     }
 }
     

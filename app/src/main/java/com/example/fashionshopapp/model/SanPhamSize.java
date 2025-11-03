@@ -42,12 +42,11 @@ public class SanPhamSize implements Serializable {
         this.soluong = soluong;
     }
 
-    // <<< BƯỚC QUAN TRỌNG NHẤT NẰM Ở ĐÂY >>>
     // Ghi đè phương thức toString() để Spinner biết phải hiển thị chuỗi nào.
     @NonNull
     @Override
     public String toString() {
-        // Bạn có thể tùy chỉnh chuỗi hiển thị ở đây
+        // tùy chỉnh chuỗi hiển thị ở đây
         // Ví dụ 1: "Size: M"
         // return "Size: " + tensize;
 

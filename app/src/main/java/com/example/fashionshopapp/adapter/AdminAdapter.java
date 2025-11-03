@@ -54,7 +54,6 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.MyViewHolder
             holder.imgAvatar.setImageResource(R.drawable.profile);
         }
 
-        // ⭐ SỬA LẠI LOGIC CLICK CUỐI CÙNG ⭐
         // Gán sự kiện cho itemView (chính là CardView) và không dùng Flag
         holder.itemView.setOnClickListener(v -> {
             Log.d("AdminAdapter", "Item clicked. Starting ChatActivity for: " + admin.getHoten());

@@ -15,7 +15,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.DangNhapActivity">
 
-    <!-- Logo của shop -->
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="150dp"
@@ -27,7 +26,6 @@
         android:layout_marginTop="40dp"
         android:contentDescription="Logo của shop" />
 
-    <!-- Tên shop -->
     <TextView
         android:id="@+id/txtTenShop"
         android:layout_width="wrap_content"
@@ -40,7 +38,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="2dp" />
 
-    <!-- Tiêu đề Đăng nhập -->
     <TextView
         android:id="@+id/txtdangnhap"
         app:layout_constraintTop_toBottomOf="@+id/txtTenShop"
@@ -53,7 +50,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!-- Ô Email -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/line1"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -74,7 +70,6 @@
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Ô Password -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/line2"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -95,7 +90,6 @@
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Nút Đăng nhập -->
     <androidx.appcompat.widget.AppCompatButton
         android:background="@drawable/background_button"
         android:id="@+id/btndangnhap"
@@ -108,7 +102,6 @@
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/line2" />
 
-    <!-- Dòng “Bạn chưa có tài khoản?” -->
     <LinearLayout
         android:id="@+id/line6"
         android:layout_width="match_parent"

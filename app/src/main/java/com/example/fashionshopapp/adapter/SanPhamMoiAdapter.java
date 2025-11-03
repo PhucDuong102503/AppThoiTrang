@@ -47,7 +47,6 @@ public class SanPhamMoiAdapter extends RecyclerView.Adapter<SanPhamMoiAdapter.My
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         holder.txtGia.setText("Giá: " + decimalFormat.format(Double.parseDouble(sanPhamMoi.getGiasanpham())) + "đ");
 
-        // ⭐⭐⭐ LOGIC ĐƠN GIẢN NHẤT: TIN TƯỞNG SERVER LUÔN TRẢ VỀ URL ĐÚNG ⭐⭐⭐
         String finalImageUrl = sanPhamMoi.getHinhanhsanpham();
 
         if (finalImageUrl != null && !finalImageUrl.isEmpty()) {

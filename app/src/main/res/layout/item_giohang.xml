@@ -14,13 +14,12 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <!-- Hình ảnh sản phẩm -->
         <ImageView
             android:id="@+id/item_giohang_image"
             android:layout_width="100dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background" /> <!-- Ảnh mặc định -->
+            android:src="@drawable/ic_launcher_background" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -29,7 +28,6 @@
             android:orientation="vertical"
             android:layout_marginStart="12dp">
 
-            <!-- Tên sản phẩm -->
             <TextView
                 android:id="@+id/item_giohang_tensp"
                 android:layout_width="wrap_content"
@@ -41,7 +39,6 @@
                 android:ellipsize="end"
                 android:textColor="@android:color/black"/>
 
-            <!-- Giá sản phẩm -->
             <TextView
                 android:id="@+id/item_giohang_giasp"
                 android:layout_width="wrap_content"
@@ -51,8 +48,6 @@
                 android:textColor="@color/red_200"
                 android:layout_marginTop="4dp"/>
 
-            <!-- =================== THÊM VÀO ĐÂY =================== -->
-            <!-- Size sản phẩm -->
             <TextView
                 android:id="@+id/itemgiohangsize"
                 android:layout_width="wrap_content"
@@ -60,7 +55,6 @@
                 android:text="Size: M"
                 android:textSize="14sp"
                 android:layout_marginTop="4dp"/>
-            <!-- ===================================================== -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -76,7 +70,6 @@
                     android:padding="0dp"
                     app:backgroundTint="#EAEAEA"
                     android:textColor="@android:color/black"/>
-            <!-- Số lượng -->
             <TextView
                 android:id="@+id/item_giohang_soluong"
                 android:layout_width="wrap_content"
@@ -99,18 +92,6 @@
 
             </LinearLayout>
 
-            <!-- Tổng tiền cho sản phẩm này (có thể bỏ đi để giao diện gọn hơn) -->
-<!--            <TextView-->
-<!--                android:id="@+id/item_giohang_tongtien"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="end"-->
-<!--                android:text="Tổng: 250,000đ"-->
-<!--                android:textSize="14sp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                android:layout_marginTop="8dp"/>-->
-            <!--check box-->
             <CheckBox
                 android:padding="5dp"
                 android:layout_marginLeft="10dp"
@@ -120,7 +101,6 @@
 
         </LinearLayout>
 
-        <!-- Nút xóa sản phẩm -->
         <ImageView
             android:id="@+id/item_giohang_delete"
             android:layout_width="wrap_content"

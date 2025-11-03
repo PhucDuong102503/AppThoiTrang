@@ -13,7 +13,6 @@
     android:background="@color/white"
     tools:context=".activity.SplashActivity">
 
-    <!-- Ảnh nền -->
     <ImageView
         android:id="@+id/splash_image"
         android:layout_width="match_parent"
@@ -23,7 +22,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="8dp" />
 
-    <!-- Tiêu đề -->
     <TextView
         android:id="@+id/splash_title"
         android:layout_width="wrap_content"
@@ -38,7 +36,6 @@
         android:lineSpacingExtra="4dp"
         android:layout_marginTop="16dp"/>
 
-    <!-- Mô tả ngắn -->
     <TextView
         android:id="@+id/splash_subtext"
         android:layout_width="wrap_content"
@@ -51,7 +48,6 @@
         android:textSize="14sp"
         android:layout_marginTop="10dp"/>
 
-    <!-- Nút bắt đầu -->
     <Button
         android:id="@+id/btn_get_started"
         android:layout_width="220dp"

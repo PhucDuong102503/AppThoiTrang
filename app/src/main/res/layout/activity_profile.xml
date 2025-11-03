@@ -121,7 +121,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ⭐ Nút Chỉnh sửa Hồ sơ ⭐ -->
             <Button
                 android:id="@+id/btn_edit_profile"
                 android:layout_width="match_parent"

@@ -8,7 +8,6 @@
     android:background="#F0F2F5"
     tools:context=".activity.ChatActivity">
 
-    <!-- 1. Thêm một Toolbar chuyên nghiệp -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_chat"
         android:layout_width="0dp"
@@ -21,7 +20,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Hỗ trợ khách hàng" />
 
-    <!-- 2. RecyclerView để hiển thị tin nhắn -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleview_chat"
         android:layout_width="0dp"
@@ -33,9 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_chat"
         tools:listitem="@layout/item_chat_received" />
-    <!-- Thay tools:listitem bằng layout item chat của bạn -->
 
-    <!-- Một đường kẻ ngang để phân chia -->
     <View
         android:id="@+id/view_divider"
         android:layout_width="0dp"
@@ -45,7 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 3. Cải thiện khu vực nhập liệu -->
     <LinearLayout
         android:id="@+id/input_layout"
         android:layout_width="0dp"
@@ -72,7 +67,6 @@
             android:paddingHorizontal="16dp"
             android:textColorHint="#9E9E9E" />
 
-        <!-- Dùng IconButton thay cho ImageView để có hiệu ứng nhấn đẹp hơn -->
         <ImageButton
             android:id="@+id/imagechat"
             android:layout_width="48dp"

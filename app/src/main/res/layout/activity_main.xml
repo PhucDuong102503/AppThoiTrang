@@ -7,13 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <!-- Phần nội dung chính của màn hình -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Toolbar cố định ở trên cùng -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toobarmanhinhchinh"
             android:layout_width="match_parent"
@@ -23,7 +21,6 @@
             app:titleTextColor="@android:color/white"
             app:menu="@menu/menu_main"/>
 
-        <!-- Bọc các phần còn lại vào NestedScrollView để cuộn được -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -34,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- ViewFlipper quảng cáo -->
                 <ViewFlipper
                     android:id="@+id/viewflipper"
                     android:layout_width="match_parent"
@@ -45,7 +41,6 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <!-- Tiêu đề cho sản phẩm mới -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -55,7 +50,6 @@
                     android:textStyle="bold"
                     android:padding="8dp" />
 
-                <!-- RecyclerView sản phẩm mới -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycleview"
                     android:layout_width="match_parent"
@@ -71,7 +65,6 @@
 
     </LinearLayout>
 
-    <!-- Phần menu trượt từ bên trái (NavigationView) -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationview"
         android:layout_width="wrap_content"

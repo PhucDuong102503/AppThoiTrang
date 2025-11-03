@@ -85,7 +85,7 @@ public interface ApiBanHang {
 //    @POST("donhang.php")
 //    @Headers("Content-Type: application/json")
 //    Observable<UserModel> datHang(@Body RequestBody body);
-// HÀM MỚI - KHẮC PHỤC LỖI
+
 @POST("donhang.php")
 @FormUrlEncoded
 Observable<MessageModel> datHang(
@@ -140,11 +140,11 @@ Observable<MessageModel> datHang(
             @Field("donhang_id") int donhang_id
     );
 
-    // HÀM MỚI ĐỂ LẤY DANH SÁCH ADMIN
+    // HÀM ĐỂ LẤY DANH SÁCH ADMIN
     @GET("get_admins.php")
     Observable<UserApiResponse> getAdmins();
 
-    // HÀM MỚI ĐỂ CẬP NHẬT FCM TOKEN
+    // HÀM ĐỂ CẬP NHẬT FCM TOKEN
     @POST("update_fcm_token.php")
     @FormUrlEncoded
     Observable<MessageModel> updateFcmToken(
@@ -152,7 +152,7 @@ Observable<MessageModel> datHang(
             @Field("fcm_token") String token
     );
 
-    // HÀM MỚI ĐỂ TẠO URL THANH TOÁN VNPAY
+    // HÀM ĐỂ TẠO URL THANH TOÁN VNPAY
     @POST("vnpay_create_payment.php")
     @FormUrlEncoded
     Observable<JsonObject> createVnpayPayment(

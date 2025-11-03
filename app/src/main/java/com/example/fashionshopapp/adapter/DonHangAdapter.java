@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.model.DonHang;
-// ⭐ Đảm bảo chỉ có duy nhất dòng import Item này
 import com.example.fashionshopapp.model.Item;
 
 import java.text.DecimalFormat;
@@ -77,7 +76,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
             holder.btnHuyDon.setVisibility(View.GONE);
         }
 
-        // --- ⭐⭐⭐ SỬA LỖI TẠI ĐÂY: CÀI ĐẶT RECYCLERVIEW CON ⭐⭐⭐ ---
 
         // 1. Tạo LayoutManager cho RecyclerView con
         LinearLayoutManager layoutManager = new LinearLayoutManager(
@@ -89,7 +87,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.MyViewHo
 
         // 2. Kiểm tra xem đơn hàng có danh sách sản phẩm (items) không
         if (donHang.getItems() != null && !donHang.getItems().isEmpty()) {
-            // 3. ⭐ SỬA DÒNG NÀY: Khởi tạo ChiTietDonHangAdapter và truyền `donHang` vào
             ChiTietDonHangAdapter chiTietAdapter = new ChiTietDonHangAdapter(context, donHang.getItems(), donHang);
 
             // 4. Set Adapter cho RecyclerView con

@@ -7,7 +7,6 @@
     android:padding="16dp"
     tools:context=".activity.OtpVerifyActivity">
 
-    <!-- ==== THÊM LOGO ==== -->
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="120dp"
@@ -93,7 +92,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ==== THÊM NÚT BACK ==== -->
     <TextView
         android:id="@+id/txtBack"
         android:layout_width="wrap_content"

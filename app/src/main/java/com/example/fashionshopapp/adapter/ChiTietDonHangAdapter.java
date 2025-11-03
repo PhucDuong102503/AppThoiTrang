@@ -24,9 +24,8 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
 
     private final Context context;
     private final List<Item> itemList;
-    private final DonHang donHang; // ⭐ BIẾN QUAN TRỌNG: Lưu thông tin đơn hàng cha
+    private final DonHang donHang; //Lưu thông tin đơn hàng cha
 
-    // ⭐ SỬA CONSTRUCTOR: Nhận thêm đối tượng DonHang
     public ChiTietDonHangAdapter(Context context, List<Item> itemList, DonHang donHang) {
         this.context = context;
         this.itemList = itemList;
@@ -62,7 +61,6 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
             holder.txtSize.setVisibility(View.GONE);
         }
 
-        // ⭐⭐⭐ LOGIC HIỂN THỊ NÚT ĐÁNH GIÁ ⭐⭐⭐
         // Chỉ hiển thị nút "Đánh giá" nếu đơn hàng đã giao thành công
         if (donHang != null && "Đã giao hàng".equals(donHang.getTrangthai())) {
             holder.btnDanhGia.setVisibility(View.VISIBLE);
@@ -93,7 +91,7 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAnh;
         TextView txtTenSp, txtSize, txtSoLuong;
-        Button btnDanhGia; // ⭐ ÁNH XẠ NÚT
+        Button btnDanhGia;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -101,7 +99,7 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
             txtTenSp = itemView.findViewById(R.id.item_thanhtoan_tensp);
             txtSize = itemView.findViewById(R.id.item_thanhtoan_size);
             txtSoLuong = itemView.findViewById(R.id.item_thanhtoan_soluong);
-            btnDanhGia = itemView.findViewById(R.id.btn_item_danhgia); // ⭐ ÁNH XẠ NÚT
+            btnDanhGia = itemView.findViewById(R.id.btn_item_danhgia);
         }
     }
 }

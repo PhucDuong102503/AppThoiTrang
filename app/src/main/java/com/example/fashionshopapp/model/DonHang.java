@@ -9,7 +9,6 @@ import com.example.fashionshopapp.model.Item;
 // Model này dùng để hứng dữ liệu của một đơn hàng từ file xemdonhang.php
 public class DonHang implements Serializable {
 
-    // Các trường này phải khớp với tên cột trong bảng `donhang` và JSON trả về
     private int id;
     private int user_id;
     private String diachi;
@@ -19,10 +18,8 @@ public class DonHang implements Serializable {
     private String trangthai;
     private String ngaydathang;
 
-    // ⭐ TRƯỜNG NÀY PHẢI SỬ DỤNG ĐÚNG LỚP `Item` MÀ BẠN ĐÃ TẠO
     private List<Item> items;
 
-    // --- Getters và Setters ---
 
     public int getId() {
         return id;

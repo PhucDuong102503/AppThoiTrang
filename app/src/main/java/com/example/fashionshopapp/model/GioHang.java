@@ -6,11 +6,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-// THAY ĐỔI 1: Định nghĩa lại khóa chính là sự kết hợp của idsp và sizeId
 @Entity(tableName = "giohang", primaryKeys = {"idsp", "sizeId"})
 public class GioHang implements Serializable {
 
-    // THAY ĐỔI 2: Đánh dấu @NonNull để đảm bảo cột này không bao giờ null
     @NonNull
     @SerializedName("sanpham_id")
     private int idsp;
@@ -31,7 +29,6 @@ public class GioHang implements Serializable {
 
     private String size;
 
-    // --- Toàn bộ phần Getters và Setters giữ nguyên, không cần thay đổi ---
     public int getIdsp() {
         return idsp;
     }

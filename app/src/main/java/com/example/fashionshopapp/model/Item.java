@@ -6,7 +6,6 @@ import java.io.Serializable;
 public class Item implements Serializable {
     // Các trường này phải khớp với JSON trả về từ file xemdonhang.php
 
-    // ⭐⭐⭐ THÊM TRƯỜNG NÀY VÀO ⭐⭐⭐
     private int sanpham_id;
 
     private String tensanpham;
@@ -15,10 +14,6 @@ public class Item implements Serializable {
     private double gia;
     private String tensize;
 
-
-    // --- Getters và Setters ---
-
-    // ⭐⭐⭐ THÊM CÁC HÀM GETTER/SETTER NÀY VÀO ⭐⭐⭐
     public int getSanpham_id() {
         return sanpham_id;
     }
@@ -27,8 +22,6 @@ public class Item implements Serializable {
         this.sanpham_id = sanpham_id;
     }
 
-
-    // --- Các hàm cũ giữ nguyên ---
     public String getTensanpham() {
         return tensanpham;
     }

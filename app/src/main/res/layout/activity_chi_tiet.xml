@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.ChiTietActivity">
 
-    <!-- Thanh tiêu đề -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toobar"
         android:layout_width="match_parent"
@@ -19,7 +18,6 @@
         app:titleTextColor="@color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ScrollView chứa toàn bộ phần nội dung chi tiết -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
@@ -35,7 +33,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Hàng chứa hình ảnh + thông tin sản phẩm -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -119,7 +116,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Mô tả sản phẩm -->
             <TextView
                 android:text="Mô tả chi tiết sản phẩm"
                 android:textStyle="bold"
@@ -135,7 +131,6 @@
                 android:layout_height="wrap_content"
                 android:text="..." />
 
-            <!-- Dải phân cách -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -143,9 +138,6 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="10dp"/>
 
-            <!-- ⭐ BẮT ĐẦU PHẦN ĐÁNH GIÁ (ĐÃ SỬA) ⭐ -->
-
-            <!-- Tiêu đề và Nút Viết Đánh Giá -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -168,7 +160,6 @@
                     tools:visibility="visible"/>
             </RelativeLayout>
 
-            <!-- Khu vực Tóm tắt Đánh giá -->
             <LinearLayout
                 android:id="@+id/layout_summary_review"
                 android:layout_width="match_parent"
@@ -207,8 +198,6 @@
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
-
-            <!-- RecyclerView để hiển thị danh sách đánh giá -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycleview_reviews"
                 android:layout_width="match_parent"
@@ -218,12 +207,10 @@
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_review" />
 
-            <!-- ⭐ KẾT THÚC PHẦN ĐÁNH GIÁ ⭐ -->
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Nút cố định ở cuối màn hình -->
     <LinearLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"

@@ -8,7 +8,6 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <!-- Phần Header của đơn hàng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,21 +33,18 @@
             android:textStyle="italic" />
     </LinearLayout>
 
-    <!-- RecyclerView con để hiển thị danh sách sản phẩm -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleview_chitiet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp" />
 
-    <!-- Đường kẻ ngang phân cách -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="#E0E0E0" />
 
-    <!-- Phần Footer của đơn hàng -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,7 +73,6 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <!-- Nút Hủy Đơn, chỉ hiển thị khi cần -->
     <Button
         android:id="@+id/btn_huydon"
         android:layout_width="wrap_content"

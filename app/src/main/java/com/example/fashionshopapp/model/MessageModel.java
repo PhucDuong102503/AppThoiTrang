@@ -9,9 +9,6 @@ public class MessageModel {
     private boolean success;
     private String message;
 
-    // --- Getters và Setters ---
-    // Gson sẽ dùng các hàm này để gán dữ liệu từ JSON vào đối tượng
-
     public boolean isSuccess() {
         return success;
     }

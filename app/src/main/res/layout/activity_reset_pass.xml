@@ -9,7 +9,6 @@
     android:paddingEnd="16dp"
     tools:context=".activity.ResetPassActivity">
 
-    <!-- 1. Logo ở trên cùng -->
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="150dp"
@@ -21,7 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 2. Tiêu đề "Quên Mật Khẩu", nằm dưới Logo -->
     <TextView
         android:id="@+id/txtquenmk"
         android:layout_width="wrap_content"
@@ -36,7 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imgLogo" />
 
-    <!-- 3. Ô nhập Email, nằm dưới Tiêu đề -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/line1"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -58,7 +55,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- 4. Nút "Quên mật khẩu", nằm dưới ô Email -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnresetpass"
         android:layout_width="0dp"
@@ -71,7 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/line1" />
 
-    <!-- 5. Nút "Back", nằm dưới nút "Quên mật khẩu" -->
     <TextView
         android:id="@+id/backtodangnhap"
         android:layout_width="wrap_content"

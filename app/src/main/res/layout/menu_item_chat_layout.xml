@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/send_1" /> <!-- Icon chat của bạn -->
+        android:src="@drawable/send_1" />
 
     <com.nex3z.notificationbadge.NotificationBadge
         android:id="@+id/badge"
@@ -21,7 +21,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="-4dp"
         app:nbMaxTextLength="2"
-        android:visibility="gone" /> <!-- Mặc định ẩn đi -->
+        android:visibility="gone" />
 
 </FrameLayout>
     

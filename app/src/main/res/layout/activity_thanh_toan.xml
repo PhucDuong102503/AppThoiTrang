@@ -96,7 +96,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- ⭐ THAY ĐỔI TẠI ĐÂY: DÙNG LinearLayout DẠNG vertical -->
     <LinearLayout
         android:id="@+id/layout_bottom"
         android:layout_width="0dp"
@@ -124,7 +123,6 @@
                 android:textStyle="bold"
                 android:textColor="@color/red_200"/>
 
-            <!-- Nút Đặt hàng (COD) -->
             <Button
                 android:id="@+id/btnDatHang"
                 android:layout_width="wrap_content"
@@ -134,7 +132,6 @@
                 android:textColor="@android:color/white"/>
         </LinearLayout>
 
-        <!-- ⭐ NÚT MỚI: THANH TOÁN QUA VNPAY -->
         <Button
             android:id="@+id/btnThanhToanVNPAY"
             android:layout_width="match_parent"

@@ -25,7 +25,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ⭐⭐⭐ THÊM IMAGEVIEW NÀY VÀO ⭐⭐⭐ -->
             <ImageView
                 android:id="@+id/image_product_review"
                 android:layout_width="120dp"
@@ -44,7 +43,6 @@
                 android:textStyle="bold"
                 tools:text="Tên sản phẩm" />
 
-            <!-- Các view còn lại giữ nguyên -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
