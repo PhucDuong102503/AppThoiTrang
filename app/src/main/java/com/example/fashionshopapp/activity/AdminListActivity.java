@@ -70,8 +70,6 @@ public class AdminListActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            // Dòng app:title trong XML đã tự đặt tiêu đề, hoặc bạn có thể đặt ở đây:
-            // getSupportActionBar().setTitle("Chọn nhân viên hỗ trợ");
             toolbar.setNavigationOnClickListener(v -> finish());
         }
     }

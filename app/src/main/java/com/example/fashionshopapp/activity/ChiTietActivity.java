@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar; // ⭐ THÊM MỚI
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,26 +67,63 @@ public class ChiTietActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chi_tiet);
 
         initView();
-        initData();
         ActionToolBar();
+        initData(); // Chuyển initData xuống sau để đảm bảo sanPhamMoi không null
 
         if (sanPhamMoi != null) {
             getSanPhamSize();
             initSpinnerSoLuong();
-            getReviews(); // Gọi hàm lấy đánh giá
+            getReviews();
         }
 
         btnThemVaoGio.setOnClickListener(v -> themVaoGio());
 
-        // THÊM SỰ KIỆN CLICK CHO NÚT VIẾT ĐÁNH GIÁ
         btnVietDanhGia.setOnClickListener(v -> {
-            // 1. Tạo một Intent để mở WriteReviewActivity
             Intent intent = new Intent(ChiTietActivity.this, WriteReviewActivity.class);
-            // 2. Đính kèm đối tượng sản phẩm để màn hình mới biết đang đánh giá sản phẩm nào
             intent.putExtra("san_pham_review", sanPhamMoi);
-            // 3. Khởi động Activity mới
             startActivity(intent);
         });
+    }
+
+    private void initData() {
+        sanPhamMoi = (SanPhamMoi) getIntent().getSerializableExtra("chitiet");
+        if (sanPhamMoi == null) {
+            Toast.makeText(this, "Không thể tải thông tin sản phẩm", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        txtTen.setText(sanPhamMoi.getTensanpham());
+        txtMoTa.setText(sanPhamMoi.getMotasanpham());
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
+        txtGia.setText("Giá: " + decimalFormat.format(Double.parseDouble(sanPhamMoi.getGiasanpham())) + "đ");
+
+        String relativeOrFullUrl = sanPhamMoi.getHinhanhsanpham();
+
+        if (relativeOrFullUrl != null && !relativeOrFullUrl.isEmpty()) {
+            String fullImageUrl;
+            if (!relativeOrFullUrl.startsWith("http")) {
+                fullImageUrl = Utils.BASE_URL + "images/" + relativeOrFullUrl;
+            } else {
+                fullImageUrl = relativeOrFullUrl;
+            }
+
+            Glide.with(this)
+                    .load(fullImageUrl)
+                    .placeholder(R.drawable.ic_media_24)
+                    .error(R.drawable.ic_media_24)
+                    .into(imgHinhAnh);
+        } else {
+            imgHinhAnh.setImageResource(R.drawable.ic_media_24);
+        }
+
+        // Logic hiển thị nút "Viết đánh giá"
+        // Trong thực tế,cần kiểm tra xem người dùng đã mua sản phẩm này chưa
+        if (Utils.user_current != null) {
+            btnVietDanhGia.setVisibility(View.VISIBLE);
+        } else {
+            btnVietDanhGia.setVisibility(View.GONE);
+        }
     }
 
     private void getReviews() {
@@ -99,28 +136,19 @@ public class ChiTietActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         reviewModel -> {
-                            //  NÂNG CẤP LOGIC XỬ LÝ KẾT QUẢ
                             if (reviewModel != null && reviewModel.isSuccess() && reviewModel.getResult() != null && !reviewModel.getResult().isEmpty()) {
-                                // Nếu có đánh giá
                                 reviewList.clear();
                                 reviewList.addAll(reviewModel.getResult());
                                 reviewAdapter.notifyDataSetChanged();
-
-                                // Tính toán và hiển thị phần tóm tắt
                                 calculateAndShowSummary();
-
-                                // Ẩn thông báo "chưa có đánh giá"
                                 txtNoReviews.setVisibility(View.GONE);
                                 layoutSummaryReview.setVisibility(View.VISIBLE);
-
                             } else {
-                                // Nếu không có đánh giá nào
                                 txtNoReviews.setVisibility(View.VISIBLE);
                                 layoutSummaryReview.setVisibility(View.GONE);
                             }
                         },
                         throwable -> {
-                            // Xử lý lỗi
                             txtNoReviews.setVisibility(View.VISIBLE);
                             layoutSummaryReview.setVisibility(View.GONE);
                             Toast.makeText(this, "Lỗi tải đánh giá: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
@@ -128,26 +156,20 @@ public class ChiTietActivity extends AppCompatActivity {
                 ));
     }
 
-    //TÍNH TOÁN VÀ HIỂN THỊ TÓM TẮT ĐÁNH GIÁ
     private void calculateAndShowSummary() {
         if (reviewList == null || reviewList.isEmpty()) {
             return;
         }
-
         float totalStars = 0;
         for (Review review : reviewList) {
             totalStars += review.getSao();
         }
-
         int reviewCount = reviewList.size();
         float averageRating = totalStars / reviewCount;
-
-        // Cập nhật lên giao diện
         ratingBarSummary.setRating(averageRating);
         String summaryText = String.format("%.1f/5 (%d đánh giá)", averageRating, reviewCount);
         txtRatingSummary.setText(summaryText);
     }
-
 
     private void initView() {
         txtTen = findViewById(R.id.txttenchitietsp);
@@ -167,44 +189,14 @@ public class ChiTietActivity extends AppCompatActivity {
         txtRatingSummary = findViewById(R.id.txt_rating_summary);
         txtNoReviews = findViewById(R.id.txt_no_reviews);
 
-        // --- Cấu hình RecyclerView ---
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewReviews.setLayoutManager(layoutManager);
         recyclerViewReviews.setNestedScrollingEnabled(false);
 
-        // --- Khởi tạo API và DB ---
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
         appDatabase = AppDatabase.getInstance(getApplicationContext());
     }
 
-    private void initData() {
-        sanPhamMoi = (SanPhamMoi) getIntent().getSerializableExtra("chitiet");
-        if (sanPhamMoi == null) {
-            Toast.makeText(this, "Không thể tải thông tin sản phẩm", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        txtTen.setText(sanPhamMoi.getTensanpham());
-        txtMoTa.setText(sanPhamMoi.getMotasanpham());
-        DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
-        txtGia.setText("Giá: " + decimalFormat.format(Double.parseDouble(sanPhamMoi.getGiasanpham())) + "đ");
-
-        String imageUrl = Utils.BASE_URL + "images/" + sanPhamMoi.getHinhanhsanpham();
-        Glide.with(this).load(imageUrl).placeholder(R.drawable.ic_media_24).into(imgHinhAnh);
-
-        // LOGIC TẠM THỜI ĐỂ HIỂN THỊ NÚT "VIẾT ĐÁNH GIÁ"
-        // Trong thực tế, bạn cần gọi API để kiểm tra xem người dùng đã mua sản phẩm này chưa
-        // Ví dụ, nếu người dùng đã đăng nhập thì hiển thị nút
-        if (Utils.user_current != null) {
-            btnVietDanhGia.setVisibility(View.VISIBLE);
-        } else {
-            btnVietDanhGia.setVisibility(View.GONE);
-        }
-        btnVietDanhGia.setVisibility(View.GONE);
-    }
-
-    // ... (CÁC HÀM CÒN LẠI: themVaoGio, themPhuKienVaoGio, themSanPhamCoSizeVaoGio, insertOrUpdateDatabase, ActionToolBar, getSanPhamSize, initSpinnerSoLuong, onDestroy GIỮ NGUYÊN KHÔNG ĐỔI)
     private void themVaoGio() {
         if (sanPhamMoi.getIdloaisanpham() == 5) {
             themPhuKienVaoGio();
@@ -216,7 +208,7 @@ public class ChiTietActivity extends AppCompatActivity {
     private void themPhuKienVaoGio() {
         final int soLuongMua = Integer.parseInt(spinnerSoLuong.getSelectedItem().toString());
         final int sanPhamIdThuc = sanPhamMoi.getId();
-        final int sizeIdMacDinh = 0; // Phụ kiện luôn có sizeId = 0
+        final int sizeIdMacDinh = 0;
 
         compositeDisposable.add(appDatabase.gioHangDAO().getProductByPrimaryKey(sanPhamIdThuc, sizeIdMacDinh)
                 .subscribeOn(Schedulers.io())
@@ -228,12 +220,12 @@ public class ChiTietActivity extends AppCompatActivity {
                         },
                         throwable -> {
                             GioHang newCartItem = new GioHang();
-                            newCartItem.setIdsp(sanPhamIdThuc); // ID thật
+                            newCartItem.setIdsp(sanPhamIdThuc);
                             newCartItem.setTensp(sanPhamMoi.getTensanpham());
                             newCartItem.setGiasp(Long.parseLong(sanPhamMoi.getGiasanpham()));
                             newCartItem.setHinhanh(sanPhamMoi.getHinhanhsanpham());
                             newCartItem.setSoluong(soLuongMua);
-                            newCartItem.setSizeId(sizeIdMacDinh); // ID Size mặc định là 0
+                            newCartItem.setSizeId(sizeIdMacDinh);
                             newCartItem.setSize("Phụ kiện");
                             insertOrUpdateDatabase(newCartItem, "Đã thêm sản phẩm vào giỏ hàng");
                         }
@@ -254,8 +246,8 @@ public class ChiTietActivity extends AppCompatActivity {
             return;
         }
 
-        final int sanPhamIdThuc = sanPhamMoi.getId(); // ID thật của sản phẩm
-        final int sizeIdThuc = selectedSize.getSize_id(); // ID thật của size đã chọn
+        final int sanPhamIdThuc = sanPhamMoi.getId();
+        final int sizeIdThuc = selectedSize.getSize_id();
 
         compositeDisposable.add(appDatabase.gioHangDAO().getProductByPrimaryKey(sanPhamIdThuc, sizeIdThuc)
                 .subscribeOn(Schedulers.io())
@@ -299,31 +291,24 @@ public class ChiTietActivity extends AppCompatActivity {
     }
 
     private void getSanPhamSize() {
-        if (sanPhamMoi.getIdloaisanpham() == 5) {
+        if (sanPhamMoi.getIdloaisanpham() == 5) { // Giả sử ID 5 là Phụ kiện
             layoutSizeSelection.setVisibility(View.GONE);
             return;
         }
 
         layoutSizeSelection.setVisibility(View.VISIBLE);
-
         compositeDisposable.add(apiBanHang.getSanPhamSize(sanPhamMoi.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         sanPhamSizeModel -> {
-                            if (sanPhamSizeModel != null && sanPhamSizeModel.isSuccess()) {
-                                List<SanPhamSize> listSize = sanPhamSizeModel.getResult();
-                                if (listSize == null || listSize.isEmpty()) {
-                                    layoutSizeSelection.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(), "Sản phẩm này tạm hết hàng hoặc chưa có size", Toast.LENGTH_LONG).show();
-                                } else {
-                                    ArrayAdapter<SanPhamSize> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listSize);
-                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    spinnerSize.setAdapter(adapter);
-                                }
+                            if (sanPhamSizeModel != null && sanPhamSizeModel.isSuccess() && sanPhamSizeModel.getResult() != null && !sanPhamSizeModel.getResult().isEmpty()) {
+                                ArrayAdapter<SanPhamSize> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sanPhamSizeModel.getResult());
+                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                spinnerSize.setAdapter(adapter);
                             } else {
                                 layoutSizeSelection.setVisibility(View.GONE);
-                                Toast.makeText(getApplicationContext(), "Sản phẩm này chưa có size", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Sản phẩm này tạm hết hàng hoặc chưa có size", Toast.LENGTH_LONG).show();
                             }
                         },
                         throwable -> {
@@ -332,7 +317,6 @@ public class ChiTietActivity extends AppCompatActivity {
                         }
                 ));
     }
-
 
     private void initSpinnerSoLuong() {
         Integer[] so = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

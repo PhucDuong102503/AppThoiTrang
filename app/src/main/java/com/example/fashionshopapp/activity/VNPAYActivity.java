@@ -19,7 +19,7 @@ import com.example.fashionshopapp.R;
 
 public class VNPAYActivity extends AppCompatActivity {
 
-    private ProgressBar progressBar; // ⭐ BIẾN MỚI
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +27,6 @@ public class VNPAYActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vnpay); // Giả sử layout của bạn có ProgressBar với id là progress_bar
 
         WebView webView = findViewById(R.id.webview_vnpay);
-        // ⭐ ÁNH XẠ PROGRESSBAR (bạn cần thêm nó vào layout)
-        // progressBar = findViewById(R.id.progress_bar);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true); // Hỗ trợ lưu trữ DOM

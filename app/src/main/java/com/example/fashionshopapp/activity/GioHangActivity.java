@@ -55,7 +55,7 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         loadDataFromDatabase();
     }
 
-    // ⭐ 2. HÀM TÍNH TỔNG TIỀN ĐƯỢC GIỮ NGUYÊN
+    //  HÀM TÍNH TỔNG TIỀN
     private void calculateTotalPrice() {
         long tongtiensp = 0;
         for (int i = 0; i < Utils.mangmuahang.size(); i++) {
@@ -67,8 +67,6 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         txtTongTien.setText(decimalFormat.format(tongtiensp) + "đ");
     }
 
-
-    // ⭐ 3. SỬA LẠI NÚT MUA HÀNG
     private void initControl() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -90,7 +88,7 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         });
     }
 
-    // ⭐ 4. ĐĂNG KÝ, LẮNG NGHE VÀ HỦY EVENTBUS
+    // 4. ĐĂNG KÝ, LẮNG NGHE VÀ HỦY EVENTBUS
     @Override
     protected void onStart() {
         super.onStart();
@@ -110,9 +108,6 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         }
     }
 
-    // Các hàm còn lại (initView, loadData, updateCartView, onItemClick,...) giữ nguyên
-    // Vì chúng vẫn cần thiết để quản lý việc tăng/giảm/xóa sản phẩm khỏi giỏ hàng tổng.
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -123,7 +118,6 @@ public class GioHangActivity extends AppCompatActivity implements GioHangItemCli
         calculateTotalPrice();
     }
 
-    // ... (Các hàm còn lại không thay đổi)
     private void loadDataFromDatabase() {
         compositeDisposable.add(appDatabase.gioHangDAO().getAllCartItems()
                 .subscribeOn(Schedulers.io())

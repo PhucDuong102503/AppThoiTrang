@@ -17,7 +17,6 @@ import com.example.fashionshopapp.R;
 import com.example.fashionshopapp.adapter.ChatAdapter;
 import com.example.fashionshopapp.model.ChatMessage;
 import com.example.fashionshopapp.util.Utils;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -46,7 +45,6 @@ public class ChatActivity extends AppCompatActivity {
     private String targetAdminId;
     private String targetAdminName;
     private String conversationKey;
-    private boolean isFirstLoad = true; // Biến cờ để chỉ chạy markAsRead một lần
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,29 +74,6 @@ public class ChatActivity extends AppCompatActivity {
         generateConversationKey();
         listenMessages();
     }
-    private void markMessagesAsRead() {
-        db.collection("messages")
-                // Chỉ lấy các tin nhắn trong cuộc hội thoại này
-                .whereEqualTo("conversationKey", this.conversationKey)
-                // Chỉ lấy các tin nhắn mà MÌNH LÀ NGƯỜI NHẬN
-                .whereEqualTo("receiver_id", this.currentUserId)
-                // Chỉ lấy các tin nhắn CHƯA ĐỌC
-                .whereEqualTo("read", false)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    // Dùng WriteBatch để cập nhật nhiều document cùng lúc cho hiệu quả
-                    WriteBatch batch = db.batch();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        batch.update(document.getReference(), "read", true);
-                    }
-                    // Commit tất cả thay đổi lên server
-                    batch.commit().addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Đã đánh dấu " + queryDocumentSnapshots.size() + " tin nhắn là đã đọc.");
-                    }).addOnFailureListener(e -> {
-                        Log.w(TAG, "Lỗi khi đánh dấu đã đọc.", e);
-                    });
-                });
-    }
 
     private void listenMessages() {
         db.collection("messages")
@@ -111,41 +86,74 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     if (value != null) {
-                        int oldSize = chatMessageList.size(); // Kích thước cũ của list
-                        for (DocumentChange docChange : value.getDocumentChanges()) {
-                            if (docChange.getType() == DocumentChange.Type.ADDED) {
-                                // Tránh thêm trùng lặp
-                                ChatMessage chatMessage = docChange.getDocument().toObject(ChatMessage.class);
-                                if (!isMessageInList(chatMessage.sender_id, chatMessage.created_at)) {
-                                    chatMessageList.add(chatMessage);
-                                }
-                            }
-                        }
-                        chatMessageList.sort((o1, o2) -> o1.getCreated_at().compareTo(o2.getCreated_at()));
-
-                        if (chatMessageList.size() > oldSize || isFirstLoad) {
-                            chatAdapter.notifyDataSetChanged();
-                            recyclerViewChat.scrollToPosition(chatMessageList.size() - 1);
+                        // Mỗi khi có thay đổi, xóa list cũ và thêm lại từ đầu.
+                        // Đây là cách làm an toàn và đảm bảo dữ liệu luôn đồng bộ.
+                        chatMessageList.clear();
+                        for (QueryDocumentSnapshot doc : value) {
+                            ChatMessage chatMessage = doc.toObject(ChatMessage.class);
+                            chatMessageList.add(chatMessage);
                         }
 
-                        if (isFirstLoad) {
-                            markMessagesAsRead();
-                            isFirstLoad = false;
+                        // Thông báo cho adapter rằng toàn bộ dữ liệu đã thay đổi
+                        chatAdapter.notifyDataSetChanged();
+
+                        // Cuộn xuống tin nhắn cuối cùng
+                        if (!chatMessageList.isEmpty()) {
+                            recyclerViewChat.smoothScrollToPosition(chatMessageList.size() - 1);
                         }
+
+                        // Sau khi tải và hiển thị tin nhắn, đánh dấu chúng là đã đọc
+                        markMessagesAsRead();
+                    } else {
+                        Log.d(TAG, "Current data: null");
                     }
                 });
     }
 
-    private boolean isMessageInList(String senderId, Date createdAt) {
-        for (ChatMessage msg : chatMessageList) {
-            if (msg.getSender_id().equals(senderId) && msg.getCreated_at().equals(createdAt)) {
-                return true;
+    private void generateConversationKey() {
+        try {
+            // Chuyển đổi ID sang kiểu số (long) để so sánh, tránh lỗi so sánh chuỗi "10" < "9"
+            long currentIdNum = Long.parseLong(currentUserId);
+            long targetIdNum = Long.parseLong(targetAdminId);
+
+            // Luôn đặt ID nhỏ hơn ở trước để đảm bảo key là duy nhất cho 2 người
+            if (currentIdNum < targetIdNum) {
+                conversationKey = currentIdNum + "_" + targetIdNum;
+            } else {
+                conversationKey = targetIdNum + "_" + currentIdNum;
             }
+            Log.d(TAG, "Generated ConversationKey: " + conversationKey);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Lỗi khi chuyển đổi ID sang số", e);
+            Toast.makeText(this, "Lỗi ID người dùng không hợp lệ.", Toast.LENGTH_SHORT).show();
+            finish();
         }
-        return false;
     }
 
-    // ---------- CÁC HÀM CŨ (KHÔNG THAY ĐỔI) ----------
+
+    // ====================  //
+
+    private void markMessagesAsRead() {
+        db.collection("messages")
+                .whereEqualTo("conversationKey", this.conversationKey)
+                .whereEqualTo("receiver_id", this.currentUserId) // Chỉ đánh dấu tin nhắn mà MÌNH nhận
+                .whereEqualTo("read", false) // và tin nhắn đó chưa được đọc
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        return; // Không có tin nhắn nào cần đánh dấu
+                    }
+                    WriteBatch batch = db.batch();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        batch.update(document.getReference(), "read", true);
+                    }
+                    batch.commit().addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Đã đánh dấu " + queryDocumentSnapshots.size() + " tin nhắn là đã đọc.");
+                    }).addOnFailureListener(e -> {
+                        Log.w(TAG, "Lỗi khi đánh dấu đã đọc.", e);
+                    });
+                });
+    }
 
     private void initView() {
         recyclerViewChat = findViewById(R.id.recycleview_chat);
@@ -158,6 +166,7 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter = new ChatAdapter(this, chatMessageList, currentUserId);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true); // Giúp RecyclerView bắt đầu từ dưới lên
         recyclerViewChat.setLayoutManager(layoutManager);
         recyclerViewChat.setAdapter(chatAdapter);
     }
@@ -180,15 +189,6 @@ public class ChatActivity extends AppCompatActivity {
                 sendMessage(messageText);
             }
         });
-    }
-
-    private void generateConversationKey() {
-        if (Integer.parseInt(currentUserId) < Integer.parseInt(targetAdminId)) {
-            conversationKey = currentUserId + "_" + targetAdminId;
-        } else {
-            conversationKey = targetAdminId + "_" + currentUserId;
-        }
-        Log.d(TAG, "Generated ConversationKey: " + conversationKey);
     }
 
     private void sendMessage(String messageText) {

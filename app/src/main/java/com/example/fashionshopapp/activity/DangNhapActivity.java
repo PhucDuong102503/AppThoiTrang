@@ -70,7 +70,7 @@ public class DangNhapActivity extends AppCompatActivity {
         Paper.book().write("pass", str_pass);
 
         // Gọi API đăng nhập, gửi lên chuỗi người dùng đã nhập
-        // File PHP của bạn đang mong đợi tham số 'tendangnhap'
+        // File PHP đang mong đợi tham số 'tendangnhap'
         compositeDisposable.add(apiBanHang.dangNhap(str_username_or_email, str_pass)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -112,9 +112,6 @@ public class DangNhapActivity extends AppCompatActivity {
         }
     }
 
-    // << XÓA BỎ HÀM onResume() >>
-    // Hàm này không cần thiết và gây xung đột với logic của PaperDB.
-    // Việc tự động điền thông tin đã được xử lý trong initView().
     /*
     @Override
     protected void onResume() {

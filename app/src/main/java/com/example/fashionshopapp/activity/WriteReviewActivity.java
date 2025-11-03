@@ -25,7 +25,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class WriteReviewActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    ImageView imgProduct; // ⭐ Ánh xạ ImageView mới
+    ImageView imgProduct;
     TextView txtProductName;
     RatingBar ratingBar;
     EditText edtComment;
@@ -55,7 +55,6 @@ public class WriteReviewActivity extends AppCompatActivity {
         if (sanPhamReview != null) {
             txtProductName.setText(sanPhamReview.getTensanpham());
 
-            // ⭐⭐⭐ HIỂN THỊ HÌNH ẢNH SẢN PHẨM ⭐⭐⭐
             String imageUrl = sanPhamReview.getHinhanhsanpham();
             if (imageUrl != null && !imageUrl.startsWith("http")) {
                 imageUrl = Utils.BASE_URL + "images/" + imageUrl;
@@ -79,7 +78,6 @@ public class WriteReviewActivity extends AppCompatActivity {
         });
     }
 
-    // Trong file WriteReviewActivity.java, hàm submitReview()
 
     private void submitReview() {
         int sao = (int) ratingBar.getRating();
@@ -99,7 +97,6 @@ public class WriteReviewActivity extends AppCompatActivity {
             return;
         }
 
-        // Gọi API gửi đánh giá (đoạn này bây giờ sẽ hết lỗi)
         compositeDisposable.add(apiBanHang.danhGiaSanPham(
                         Utils.user_current.getId(), // Đổi currentUser thành user_current
                         sanPhamReview.getId(),
@@ -127,7 +124,7 @@ public class WriteReviewActivity extends AppCompatActivity {
 
     private void initView() {
         toolbar = findViewById(R.id.toolbar_write_review);
-        imgProduct = findViewById(R.id.image_product_review); // ⭐ Ánh xạ ImageView mới
+        imgProduct = findViewById(R.id.image_product_review); // Ánh xạ ImageView mới
         txtProductName = findViewById(R.id.text_product_name_review);
         ratingBar = findViewById(R.id.rating_bar_review);
         edtComment = findViewById(R.id.edit_text_comment);

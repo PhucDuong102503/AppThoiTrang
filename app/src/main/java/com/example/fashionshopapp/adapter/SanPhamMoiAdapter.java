@@ -1,6 +1,10 @@
+// Đường dẫn: C:/Users/PC/Documents/GitHub/AppThoiTrang/app/src/main/java/com/example/fashionshopapp/adapter/SanPhamMoiAdapter.java
+
 package com.example.fashionshopapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.fashionshopapp.Interface.ItemClickListener;
 import com.example.fashionshopapp.R;
+import com.example.fashionshopapp.activity.ChiTietActivity;
 import com.example.fashionshopapp.model.SanPhamMoi;
-import com.example.fashionshopapp.util.Utils; // ⭐ QUAN TRỌNG: THÊM IMPORT NÀY
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -21,12 +25,10 @@ import java.util.List;
 public class SanPhamMoiAdapter extends RecyclerView.Adapter<SanPhamMoiAdapter.MyViewHolder> {
     Context context;
     List<SanPhamMoi> array;
-    private ItemClickListener itemClickListener;
 
-    public SanPhamMoiAdapter(Context context, List<SanPhamMoi> array, ItemClickListener itemClickListener) {
+    public SanPhamMoiAdapter(Context context, List<SanPhamMoi> array) {
         this.context = context;
         this.array = array;
-        this.itemClickListener = itemClickListener;
     }
 
     @NonNull
@@ -45,35 +47,30 @@ public class SanPhamMoiAdapter extends RecyclerView.Adapter<SanPhamMoiAdapter.My
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         holder.txtGia.setText("Giá: " + decimalFormat.format(Double.parseDouble(sanPhamMoi.getGiasanpham())) + "đ");
 
-        // ⭐⭐ LOGIC XỬ LÝ HÌNH ẢNH "CHỐNG ĐẠN" (AN TOÀN TUYỆT ĐỐI) ⭐⭐
-        String imageUrl = sanPhamMoi.getHinhanhsanpham();
+        // ⭐⭐⭐ LOGIC ĐƠN GIẢN NHẤT: TIN TƯỞNG SERVER LUÔN TRẢ VỀ URL ĐÚNG ⭐⭐⭐
+        String finalImageUrl = sanPhamMoi.getHinhanhsanpham();
 
-        // 1. Kiểm tra xem imageUrl có hợp lệ không
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            String fullImageUrl;
-            // 2. Nếu URL không bắt đầu bằng "http", nó là đường dẫn tương đối -> nối với BASE_URL
-            if (!imageUrl.startsWith("http")) {
-                fullImageUrl = Utils.BASE_URL + imageUrl;
-            } else {
-                // 3. Nếu đã là URL đầy đủ, dùng luôn
-                fullImageUrl = imageUrl;
-            }
+        if (finalImageUrl != null && !finalImageUrl.isEmpty()) {
+            Log.d("GlideLoader", "Final URL from server: " + finalImageUrl);
 
-            // 4. Dùng Glide để tải ảnh
+            // Chỉ việc dùng Glide để tải URL mà server trả về
             Glide.with(context)
-                    .load(fullImageUrl)
-                    .placeholder(R.drawable.ic_media_24) // Ảnh hiển thị khi đang tải
-                    .error(R.drawable.ic_media_24)      // Ảnh hiển thị nếu lỗi
+                    .load(finalImageUrl)
+                    .placeholder(R.drawable.ic_media_24)
+                    .error(R.drawable.ic_media_24)
                     .into(holder.imghinhanh);
         } else {
-            // 5. Nếu không có URL, hiển thị ảnh lỗi
+            // Nếu không có thông tin ảnh, hiển thị ảnh mặc định
             holder.imghinhanh.setImageResource(R.drawable.ic_media_24);
         }
 
         // Gán sự kiện click cho item
-        holder.itemView.setOnClickListener(view -> {
-            if (itemClickListener != null) {
-                itemClickListener.onClick(view, position, false);
+        holder.setItemClickListener((view, pos, isLongClick) -> {
+            if (!isLongClick) {
+                Intent intent = new Intent(context, ChiTietActivity.class);
+                intent.putExtra("chitiet", array.get(pos));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
             }
         });
     }
@@ -83,15 +80,28 @@ public class SanPhamMoiAdapter extends RecyclerView.Adapter<SanPhamMoiAdapter.My
         return array != null ? array.size() : 0;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtTen, txtGia;
         ImageView imghinhanh;
+        private ItemClickListener itemClickListener;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTen = itemView.findViewById(R.id.itemsp_ten);
             txtGia = itemView.findViewById(R.id.itemsp_gia);
             imghinhanh = itemView.findViewById(R.id.itemsp_image);
+            itemView.setOnClickListener(this);
+        }
+
+        public void setItemClickListener(ItemClickListener itemClickListener) {
+            this.itemClickListener = itemClickListener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (itemClickListener != null) {
+                itemClickListener.onClick(view, getAdapterPosition(), false);
+            }
         }
     }
 }

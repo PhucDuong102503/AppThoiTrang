@@ -39,8 +39,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-// KHÔNG CẦN IMPORT IMAGEPICKER NỮA
-// import com.github.dhaval2404.imagepicker.ImagePicker;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -135,7 +133,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
-    // Hàm mới để kiểm tra quyền và mở thư viện
+    // Hàm để kiểm tra quyền và mở thư viện
     private void checkPermissionAndOpenGallery() {
         String permission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -157,7 +155,6 @@ public class EditProfileActivity extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
-    // HÀM onActivityResult KHÔNG CÒN CẦN THIẾT NỮA
 
     private void setUserInfo() {
         if (Utils.user_current != null) {
@@ -178,7 +175,6 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void updateProfile() {
-        // Phần này giữ nguyên, không thay đổi
         Toast.makeText(this, "Đang cập nhật...", Toast.LENGTH_SHORT).show();
 
         String str_id = String.valueOf(Utils.user_current.getId());

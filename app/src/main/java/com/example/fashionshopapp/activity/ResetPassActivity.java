@@ -56,13 +56,11 @@ public class ResetPassActivity extends AppCompatActivity {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("email", email);
 
-        // Sử dụng đường dẫn đầy đủ để đảm bảo không import nhầm
         okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(
                 okhttp3.MediaType.parse("application/json"),
                 jsonObject.toString()
         );
 
-        // <<< SỬA LỖI TẠI ĐÂY: GỌI ĐÚNG HÀM sendResetPasswordOtp >>>
         compositeDisposable.add(apiBanHang.sendResetPasswordOtp(requestBody)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

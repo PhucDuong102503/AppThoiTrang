@@ -29,7 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
         initControl();
     }
 
-    // ⭐ Cập nhật lại thông tin khi quay lại từ màn hình Edit
+    // Cập nhật lại thông tin khi quay lại từ màn hình Edit
     @Override
     protected void onResume() {
         super.onResume();
@@ -62,7 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        // ⭐ Chuyển sang màn hình EditProfileActivity
+        // Chuyển sang màn hình EditProfileActivity
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(this, EditProfileActivity.class);
             startActivity(intent);
@@ -84,7 +84,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtSoDienThoai = findViewById(R.id.profile_sodienthoai);
         txtDiaChi = findViewById(R.id.profile_diachi);
         btnDangXuat = findViewById(R.id.btn_dangxuat);
-        btnEditProfile = findViewById(R.id.btn_edit_profile); // ⭐ Ánh xạ nút mới
+        btnEditProfile = findViewById(R.id.btn_edit_profile); // Ánh xạ nút mới
         imgProfile = findViewById(R.id.profile_image);
     }
 }

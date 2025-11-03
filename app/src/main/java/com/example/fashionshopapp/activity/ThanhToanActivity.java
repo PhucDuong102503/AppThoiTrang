@@ -129,7 +129,6 @@ public class ThanhToanActivity extends AppCompatActivity {
             }
 
             try {
-                // SỬA LỖI TẠI ĐÂY: Thay thế cả dấu phẩy và dấu chấm
                 String tongTienString = txtTongTien.getText().toString()
                         .replace(",", "") // Thay thế dấu phẩy
                         .replace(".", "") // Thay thế dấu chấm (dự phòng)
@@ -147,7 +146,6 @@ public class ThanhToanActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                // ⭐⭐⭐ BẮT ĐẦU KHỐI SỬA LỖI ClassCastException ⭐⭐⭐
                                 (JsonElement response) -> { // SỬA 1: Nhận response là JsonElement
                                     btnThanhToanVNPAY.setEnabled(true); // Mở lại nút
 
@@ -172,7 +170,6 @@ public class ThanhToanActivity extends AppCompatActivity {
                                         Log.e("VNPAY_ERROR", "Phản hồi không phải JSON: " + (response != null ? response.toString() : "null"));
                                     }
                                 },
-                                // ⭐⭐⭐ KẾT THÚC KHỐI SỬA LỖI ⭐⭐⭐
                                 throwable -> {
                                     btnThanhToanVNPAY.setEnabled(true);
                                     Toast.makeText(this, "Lỗi kết nối khi tạo thanh toán: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
@@ -228,7 +225,6 @@ public class ThanhToanActivity extends AppCompatActivity {
     }
 
 
-    // --- CÁC HÀM CŨ (KHÔNG CẦN SỬA) ---
     private void getIntentData() {
         tongtien = getIntent().getLongExtra("tongtien", 0);
         danhSachDaChon = (List<GioHang>) getIntent().getSerializableExtra("danhsachmua");

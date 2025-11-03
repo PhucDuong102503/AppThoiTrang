@@ -1,3 +1,4 @@
+// Đường dẫn: C:/Users/PC/Documents/GitHub/AppThoiTrang/app/src/main/java/com/example/fashionshopapp/activity/MainActivity.java
 package com.example.fashionshopapp.activity;
 
 import android.content.Context;
@@ -95,20 +96,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void Anhxa() {
+        toolbar = findViewById(R.id.toobarmanhinhchinh);
+        viewFlipper = findViewById(R.id.viewflipper);
+        recyclerViewmanhinhchinh = findViewById(R.id.recycleview);
+        navigationView = findViewById(R.id.navigationview);
+        listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
+        drawerLayout = findViewById(R.id.drawerlayout);
+
+        mangloaisp = new ArrayList<>();
+        mangSpMoi = new ArrayList<>();
+
+        // Khởi tạo SanPhamMoiAdapter với constructor đúng (chỉ có 2 tham số).
+        // Logic xử lý click đã được chuyển vào bên trong Adapter, nên không cần truyền listener ở đây nữa.
+        spMoiAdapter = new SanPhamMoiAdapter(this, mangSpMoi);
+
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerViewmanhinhchinh.setLayoutManager(layoutManager);
+        recyclerViewmanhinhchinh.setHasFixedSize(true);
+        recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
+    }
+
+
     private void listenForUnreadMessages() {
-        // Chỉ lắng nghe khi người dùng đã đăng nhập
         if (Utils.user_current == null || Utils.user_current.getId() == 0) {
-            updateBadge(0); // Đảm bảo badge trống nếu chưa đăng nhập
+            updateBadge(0);
             return;
         }
-
         String currentUserId = String.valueOf(Utils.user_current.getId());
-
-        // Nếu đã có listener cũ, hãy hủy nó đi để tránh chạy nhiều lần
         if (unreadListener != null) {
             unreadListener.remove();
         }
-
         unreadListener = db.collection("messages")
                 .whereEqualTo("receiver_id", currentUserId)
                 .whereEqualTo("read", false)
@@ -117,13 +135,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.w("FirestoreListener", "Listen failed.", error);
                         return;
                     }
-
                     if (snapshots != null) {
-                        // Lấy số lượng document thỏa mãn điều kiện
-                        int unreadCount = snapshots.size();
-                        Log.d("FirestoreListener", "Unread count: " + unreadCount);
-                        // Cập nhật badge
-                        updateBadge(unreadCount);
+                        updateBadge(snapshots.size());
                     } else {
                         updateBadge(0);
                     }
@@ -141,8 +154,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // GỌI LẠI listenForUnreadMessages KHI USER QUAY LẠI APP ĐỂ ĐẢM BẢO
-    // USER ĐƯỢC CẬP NHẬT (SAU KHI ĐĂNG NHẬP/ĐĂNG XUẤT)
     @Override
     protected void onResume() {
         super.onResume();
@@ -150,11 +161,9 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             Utils.user_current = user;
         }
-        // Lắng nghe lại để cập nhật badge theo user_current mới nhất
         listenForUnreadMessages();
     }
 
-    // RẤT QUAN TRỌNG: HỦY LISTENER KHI ACTIVITY BỊ HỦY
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -171,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
         View actionView = menuItem.getActionView();
         actionView.setOnClickListener(v -> onOptionsItemSelected(menuItem));
         badge = actionView.findViewById(R.id.badge);
-        // Cập nhật badge lần đầu tiên khi menu được tạo
         listenForUnreadMessages();
         return true;
     }
@@ -189,8 +197,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), AdminListActivity.class));
             return true;
         } else if (id == R.id.menu_donhang) {
-            // ⭐⭐⭐ SỬA LỖI TẠI ĐÂY ⭐⭐⭐
-            // Đổi từ XemDonHangActivity sang DonHangActivity để hiển thị giao diện 3 tab
             startActivity(new Intent(this, DonHangActivity.class));
             return true;
         } else if (id == R.id.menu_hoso) {
@@ -198,34 +204,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    // ---------- CÁC HÀM CŨ (KHÔNG THAY ĐỔI) ----------
-
-    private void Anhxa() {
-        toolbar = findViewById(R.id.toobarmanhinhchinh);
-        viewFlipper = findViewById(R.id.viewflipper);
-        recyclerViewmanhinhchinh = findViewById(R.id.recycleview);
-        navigationView = findViewById(R.id.navigationview);
-        listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
-        drawerLayout = findViewById(R.id.drawerlayout);
-
-        mangloaisp = new ArrayList<>();
-        mangSpMoi = new ArrayList<>();
-
-        spMoiAdapter = new SanPhamMoiAdapter(this, mangSpMoi, (view, pos, isLongClick) -> {
-            if (!isLongClick) {
-                SanPhamMoi sanPhamDaClick = mangSpMoi.get(pos);
-                Intent intent = new Intent(MainActivity.this, ChiTietActivity.class);
-                intent.putExtra("chitiet", sanPhamDaClick);
-                startActivity(intent);
-            }
-        });
-
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-        recyclerViewmanhinhchinh.setLayoutManager(layoutManager);
-        recyclerViewmanhinhchinh.setHasFixedSize(true);
-        recyclerViewmanhinhchinh.setAdapter(spMoiAdapter);
     }
 
     private void getSpMoi() {
@@ -248,12 +226,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().getToken()
                 .addOnSuccessListener(token -> {
                     if (!TextUtils.isEmpty(token)) {
-                        Log.d("FCM_TOKEN", "Token của thiết bị: " + token);
                         if (Utils.user_current != null && Utils.user_current.getId() != 0) {
                             updateFcmTokenOnServer(token);
                         }
-                    } else {
-                        Log.w("FCM_TOKEN", "Không thể lấy được token.");
                     }
                 });
     }
@@ -263,13 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        response -> {
-                            if (response.isSuccess()) {
-                                Log.d("FCM_TOKEN", "Cập nhật token trên server thành công.");
-                            } else {
-                                Log.d("FCM_TOKEN", "Cập nhật token thất bại: " + response.getMessage());
-                            }
-                        },
+                        response -> Log.d("FCM_TOKEN", "Cập nhật token: " + (response.isSuccess() ? "Thành công" : "Thất bại")),
                         throwable -> Log.e("FCM_TOKEN", "Lỗi khi cập nhật token: ", throwable)
                 ));
     }
