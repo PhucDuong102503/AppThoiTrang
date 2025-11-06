@@ -21,6 +21,9 @@
         android:theme="@style/Theme.FashionShopApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.GeminiChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.DonHangActivity"
             android:exported="false" />
         <activity

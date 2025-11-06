@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <!-- Cho phép kết nối HTTP đến địa chỉ IP của máy ảo -->
-        <!--  <domain includeSubdomains="true">192.168.1.9</domain>-->
-         <domain includeSubdomains="true">10.0.2.2</domain>
-        </domain-config>
-    </network-security-config>
+    <!--
+        Sử dụng base-config để áp dụng cho toàn bộ ứng dụng.
+        Thuộc tính cleartextTrafficPermitted="true" cho phép ứng dụng kết nối
+        đến các địa chỉ HTTP không mã hóa như http://10.0.2.2
+        và http://10.0.2.2:3000 trong môi trường phát triển (development).
+    -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

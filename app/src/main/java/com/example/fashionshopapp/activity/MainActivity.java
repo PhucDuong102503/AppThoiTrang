@@ -35,6 +35,7 @@ import com.example.fashionshopapp.model.User;
 import com.example.fashionshopapp.retrofit.ApiBanHang;
 import com.example.fashionshopapp.retrofit.RetrofitClient;
 import com.example.fashionshopapp.util.Utils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     ListView listViewManHinhChinh;
     DrawerLayout drawerLayout;
+
+    FloatingActionButton fabAiChat;
 
     LoaiSpAdapter loaiSpAdapter;
     List<Loaisp> mangloaisp;
@@ -103,12 +106,11 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigationview);
         listViewManHinhChinh = findViewById(R.id.listviewmanhinhchinh);
         drawerLayout = findViewById(R.id.drawerlayout);
+        fabAiChat = findViewById(R.id.fab_ai_chat);
 
         mangloaisp = new ArrayList<>();
         mangSpMoi = new ArrayList<>();
 
-        // Khởi tạo SanPhamMoiAdapter với constructor đúng (chỉ có 2 tham số).
-        // Logic xử lý click đã được chuyển vào bên trong Adapter, nên không cần truyền listener ở đây nữa.
         spMoiAdapter = new SanPhamMoiAdapter(this, mangSpMoi);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -244,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getEventClick() {
+        // Sự kiện click cho ListView trong NavigationDrawer
         listViewManHinhChinh.setOnItemClickListener((parent, view, i, l) -> {
             switch (i) {
                 case 0:
@@ -262,6 +265,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), LoadMoreSpActivity.class).putExtra("idloaisanpham", 5));
                     break;
             }
+        });
+
+        fabAiChat.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), GeminiChatActivity.class);
+            startActivity(intent);
         });
     }
 

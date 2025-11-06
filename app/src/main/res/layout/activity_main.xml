@@ -7,63 +7,82 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <LinearLayout
+    <!-- Bọc toàn bộ nội dung chính trong một CoordinatorLayout -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toobarmanhinhchinh"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#FF5722"
-            app:title="Fashion Shop"
-            app:titleTextColor="@android:color/white"
-            app:menu="@menu/menu_main"/>
-
-        <androidx.core.widget.NestedScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toobarmanhinhchinh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="?attr/actionBarSize"
+                android:background="#FF5722"
+                app:title="Fashion Shop"
+                app:titleTextColor="@android:color/white"
+                app:menu="@menu/menu_main"/>
 
-                <ViewFlipper
-                    android:id="@+id/viewflipper"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
-
-            <LinearLayout
-                android:background="#E5F6825C"
-                android:orientation="vertical"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sản phẩm mới nhất"
-                    android:textSize="18sp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycleview"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"/>
+                    android:orientation="vertical">
 
-            </LinearLayout>
-            </LinearLayout>
+                    <ViewFlipper
+                        android:id="@+id/viewflipper"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp" />
 
-        </androidx.core.widget.NestedScrollView>
+                    <LinearLayout
+                        android:background="#E5F6825C"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sản phẩm mới nhất"
+                            android:textSize="18sp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:padding="8dp" />
 
-    </LinearLayout>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycleview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_ai_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_media_24"
+            app:backgroundTint="?attr/colorPrimary"
+            app:tint="@android:color/white"
+            android:contentDescription="Trợ lý AI" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationview"

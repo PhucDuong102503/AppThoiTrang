@@ -1,6 +1,8 @@
 package com.example.fashionshopapp.retrofit;
 
 import com.example.fashionshopapp.model.DonHangModel;
+import com.example.fashionshopapp.model.GeminiRequest;
+import com.example.fashionshopapp.model.GeminiResponse;
 import com.example.fashionshopapp.model.LoaiSpModel;
 import com.example.fashionshopapp.model.MessageModel;
 import com.example.fashionshopapp.model.ReviewModel;
@@ -176,4 +178,8 @@ Observable<MessageModel> datHang(
             @Field("sanpham_id") int sanpham_id,
             @Field("page") int page
     );
+
+    // API MỚI CHO GEMINI
+    @POST("api/ai/gemini-chat") // Đường dẫn này phải khớp với file route.js trên Next.js
+    Observable<GeminiResponse> sendQueryToGemini(@Body GeminiRequest request);
 }
