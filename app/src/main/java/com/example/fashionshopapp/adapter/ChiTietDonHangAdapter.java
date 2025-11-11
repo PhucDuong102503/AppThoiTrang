@@ -1,4 +1,6 @@
-package com.example.fashionshopapp.adapter;import android.content.Context;
+package com.example.fashionshopapp.adapter;
+
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,12 +49,21 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
         holder.txtTenSp.setText(item.getTensanpham());
         holder.txtSoLuong.setText("x" + item.getSoluong());
 
+        // ⭐⭐⭐ BẮT ĐẦU SỬA LỖI TẠI ĐÂY ⭐⭐⭐
         String imageUrl = item.getHinhanhsanpham();
-        // Giả sử API trả về đường dẫn tương đối
+
+        // Chỉ ghép nối BASE_URL, không thêm "hinhanh" hay "images" nữa.
+        // Tin tưởng rằng API trả về đường dẫn tương đối chính xác.
         if (imageUrl != null && !imageUrl.startsWith("http")) {
-            imageUrl = Utils.BASE_URL + "images/" + imageUrl;
+            imageUrl = Utils.BASE_URL + imageUrl;
         }
-        Glide.with(context).load(imageUrl).placeholder(R.drawable.ic_media_24).into(holder.imgAnh);
+
+        Glide.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_media_24) // Ảnh mặc định khi đang tải
+                .error(R.drawable.ic_media_24)       // Thay bằng ảnh lỗi của bạn nếu có
+                .into(holder.imgAnh);
+        // ⭐⭐⭐ KẾT THÚC SỬA LỖI ⭐⭐⭐
 
         if (item.getTensize() != null && !item.getTensize().isEmpty()) {
             holder.txtSize.setText("Size: " + item.getTensize());
@@ -61,7 +72,7 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
             holder.txtSize.setVisibility(View.GONE);
         }
 
-        // Chỉ hiển thị nút "Đánh giá" nếu đơn hàng đã giao thành công
+        // Chỉ hiển thị nút "Đánh giá" nếu đơn hàng đã giao thành công (logic này đã đúng)
         if (donHang != null && "Đã giao hàng".equals(donHang.getTrangthai())) {
             holder.btnDanhGia.setVisibility(View.VISIBLE);
         } else {
@@ -72,7 +83,7 @@ public class ChiTietDonHangAdapter extends RecyclerView.Adapter<ChiTietDonHangAd
             Intent intent = new Intent(context, WriteReviewActivity.class);
 
             SanPhamMoi sanPhamReview = new SanPhamMoi();
-            sanPhamReview.setId(item.getSanpham_id()); // Cần có getSanpham_id() trong model Item
+            sanPhamReview.setId(item.getSanpham_id());
             sanPhamReview.setTensanpham(item.getTensanpham());
             sanPhamReview.setHinhanhsanpham(item.getHinhanhsanpham());
 
