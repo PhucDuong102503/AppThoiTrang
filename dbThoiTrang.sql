@@ -1,0 +1,530 @@
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+--
+-- Host: localhost    Database: thoitrang
+-- ------------------------------------------------------
+-- Server version	9.4.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `chitietdonhang`
+--
+
+DROP TABLE IF EXISTS `chitietdonhang`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `chitietdonhang` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `donhang_id` int NOT NULL,
+  `sanpham_id` int NOT NULL,
+  `soluong` int NOT NULL,
+  `gia` decimal(12,2) NOT NULL,
+  `size_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ctdh_donhang` (`donhang_id`),
+  KEY `fk_ctdh_sanpham` (`sanpham_id`),
+  CONSTRAINT `fk_ctdh_donhang` FOREIGN KEY (`donhang_id`) REFERENCES `donhang` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_ctdh_sanpham` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `chitietdonhang`
+--
+
+LOCK TABLES `chitietdonhang` WRITE;
+/*!40000 ALTER TABLE `chitietdonhang` DISABLE KEYS */;
+INSERT INTO `chitietdonhang` VALUES (32,31,39,1,2500000.00,1),(33,32,38,1,3500000.00,1),(34,33,9,1,289000.00,1),(35,34,34,1,720000.00,1),(36,35,26,1,370000.00,1),(37,36,36,1,220000.00,1),(38,37,44,1,10000.00,1),(39,38,39,1,2500000.00,1),(40,39,36,1,220000.00,1),(41,40,36,1,220000.00,1),(42,41,36,1,220000.00,1),(43,42,39,1,2500000.00,3),(44,43,36,1,220000.00,2),(45,44,44,1,10000.00,2);
+/*!40000 ALTER TABLE `chitietdonhang` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `chitietphieunhap`
+--
+
+DROP TABLE IF EXISTS `chitietphieunhap`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `chitietphieunhap` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `phieunhap_id` int NOT NULL,
+  `sanpham_id` int NOT NULL,
+  `size_id` int DEFAULT NULL,
+  `soluong_nhap` int NOT NULL,
+  `gianhap` decimal(12,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `phieunhap_id` (`phieunhap_id`),
+  KEY `sanpham_id` (`sanpham_id`),
+  KEY `size_id` (`size_id`),
+  CONSTRAINT `chitietphieunhap_ibfk_1` FOREIGN KEY (`phieunhap_id`) REFERENCES `phieunhap` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `chitietphieunhap_ibfk_2` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `chitietphieunhap_ibfk_3` FOREIGN KEY (`size_id`) REFERENCES `size` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `chitietphieunhap`
+--
+
+LOCK TABLES `chitietphieunhap` WRITE;
+/*!40000 ALTER TABLE `chitietphieunhap` DISABLE KEYS */;
+/*!40000 ALTER TABLE `chitietphieunhap` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `danhgia`
+--
+
+DROP TABLE IF EXISTS `danhgia`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `danhgia` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `sanpham_id` int NOT NULL,
+  `donhang_id` int NOT NULL,
+  `sao` int NOT NULL,
+  `binhluan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `hinhanh_danhgia` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ngaydanhgia` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `sanpham_id` (`sanpham_id`),
+  KEY `donhang_id` (`donhang_id`),
+  CONSTRAINT `danhgia_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `danhgia_ibfk_2` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`),
+  CONSTRAINT `danhgia_ibfk_3` FOREIGN KEY (`donhang_id`) REFERENCES `donhang` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `danhgia`
+--
+
+LOCK TABLES `danhgia` WRITE;
+/*!40000 ALTER TABLE `danhgia` DISABLE KEYS */;
+INSERT INTO `danhgia` VALUES (1,9,38,32,4,'ok',NULL,'2025-11-02 08:50:13'),(2,15,36,41,4,'dep',NULL,'2025-11-02 08:55:07');
+/*!40000 ALTER TABLE `danhgia` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `donhang`
+--
+
+DROP TABLE IF EXISTS `donhang`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `donhang` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `diachi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sodienthoai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `soluong` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tongtien` decimal(12,2) NOT NULL,
+  `ngaydathang` datetime DEFAULT CURRENT_TIMESTAMP,
+  `trangthai` enum('Đã giao hàng','Chờ giao hàng','Đã hủy đơn') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'Chờ giao hàng',
+  PRIMARY KEY (`id`),
+  KEY `fk_donhang_user` (`user_id`),
+  CONSTRAINT `fk_donhang_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `donhang`
+--
+
+LOCK TABLES `donhang` WRITE;
+/*!40000 ALTER TABLE `donhang` DISABLE KEYS */;
+INSERT INTO `donhang` VALUES (31,15,'Ho Chi Minh','0909152969','phucdqhe173065@fpt.edu.vn','1',2500000.00,'2025-10-27 13:54:09','Đã giao hàng'),(32,9,'Ha Noi','0393454486','emkujma@gmail.com','1',3500000.00,'2025-10-27 14:20:11','Đã giao hàng'),(33,9,'Ha Noi','0393454486','emkujma@gmail.com','1',289000.00,'2025-10-27 14:20:54','Đã hủy đơn'),(34,15,'Ho Chi Minh','0909152969','phucdqhe173065@fpt.edu.vn','1',720000.00,'2025-10-28 03:12:53','Đã hủy đơn'),(35,15,'Ho Chi Minh','0909152969','phucdqhe173065@fpt.edu.vn','1',370000.00,'2025-10-29 00:33:47','Đã hủy đơn'),(36,15,'Ho Chi Minh','0909152969','phucdqhe173065@fpt.edu.vn','1',220000.00,'2025-10-29 00:34:39','Đã hủy đơn'),(37,15,'Ho Chi Minh','0909152969','phucdqhe173065@fpt.edu.vn','1',10000.00,'2025-10-30 21:16:10','Đã hủy đơn'),(38,11,'Ho Chi Minh','1234567890','ha123@gmail.com','1',2500000.00,'2025-10-30 21:25:12','Đã giao hàng'),(39,15,'Ha Noi','0909152969','phucdqhe173065@fpt.edu.vn','1',220000.00,'2025-10-30 22:29:28','Chờ giao hàng'),(40,15,'Ha Noi','0909152969','phucdqhe173065@fpt.edu.vn','1',220000.00,'2025-11-01 21:44:25','Đã giao hàng'),(41,15,'Ha Noi','0909152969','phucdqhe173065@fpt.edu.vn','1',220000.00,'2025-11-02 03:23:02','Đã giao hàng'),(42,15,'Ha Noi','0909152969','phucdqhe173065@fpt.edu.vn','1',2500000.00,'2025-11-02 14:07:18','Chờ giao hàng'),(43,9,'Ha Noi','0393454486','emkujma@gmail.com','1',220000.00,'2025-11-02 15:35:06','Chờ giao hàng'),(44,15,'Ha Noi','0909152969','phucdqhe173065@fpt.edu.vn','1',10000.00,'2025-11-06 17:56:34','Chờ giao hàng');
+/*!40000 ALTER TABLE `donhang` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `giohang`
+--
+
+DROP TABLE IF EXISTS `giohang`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `giohang` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `sanpham_id` int NOT NULL,
+  `soluong` int DEFAULT '1',
+  `ngaythem` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_giohang_user` (`user_id`),
+  KEY `fk_giohang_sanpham` (`sanpham_id`),
+  CONSTRAINT `fk_giohang_sanpham` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_giohang_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `giohang`
+--
+
+LOCK TABLES `giohang` WRITE;
+/*!40000 ALTER TABLE `giohang` DISABLE KEYS */;
+/*!40000 ALTER TABLE `giohang` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `hinhanhsanpham`
+--
+
+DROP TABLE IF EXISTS `hinhanhsanpham`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `hinhanhsanpham` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sanpham_id` int DEFAULT NULL,
+  `duongdan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sanpham_id` (`sanpham_id`),
+  CONSTRAINT `hinhanhsanpham_ibfk_1` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `hinhanhsanpham`
+--
+
+LOCK TABLES `hinhanhsanpham` WRITE;
+/*!40000 ALTER TABLE `hinhanhsanpham` DISABLE KEYS */;
+/*!40000 ALTER TABLE `hinhanhsanpham` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `loaisanpham`
+--
+
+DROP TABLE IF EXISTS `loaisanpham`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `loaisanpham` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tenloaisanpham` varchar(200) NOT NULL,
+  `hinhloaisanpham` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `loaisanpham`
+--
+
+LOCK TABLES `loaisanpham` WRITE;
+/*!40000 ALTER TABLE `loaisanpham` DISABLE KEYS */;
+INSERT INTO `loaisanpham` VALUES (1,'Trang chủ','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMZLMn73h2Hu6HTrsUBW4I48HVIPLo2P5yakY4blUbSkSnqrC4FrjW3zIJ_9S45YD-z4E&usqp=CAU'),(2,'Áo','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMBceC2Tr4ldCeqKwi6xYVKDxAue0EnmwNFw&s'),(3,'Quần','https://pos.nvncdn.com/fa2431-2286/ps/20250414_65DfCdLHVk.jpeg?v=1744604813'),(4,'Giày dép','https://pos.nvncdn.com/6ddefc-25341/ps/20200211_6ppmaMBW93aVclvamnwJ5kDy.jpg?v=1676046259'),(5,'Phụ kiện','https://product.hstatic.net/200000103143/product/_rgb_4f5e1eab284a46bb949e68457d16e2d7_f5b61e30a8894f0fb7666ad0c3663409_91fdb7d346b94601b3d98c584ec96ceb.png');
+/*!40000 ALTER TABLE `loaisanpham` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `messages`
+--
+
+DROP TABLE IF EXISTS `messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `messages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sender_id` int NOT NULL,
+  `receiver_id` int DEFAULT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_read` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_sender` (`sender_id`),
+  KEY `fk_receiver` (`receiver_id`),
+  CONSTRAINT `fk_receiver` FOREIGN KEY (`receiver_id`) REFERENCES `user` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_sender` FOREIGN KEY (`sender_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `messages`
+--
+
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+INSERT INTO `messages` VALUES (1,10,15,'alo','2025-10-30 06:48:22',0);
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `phieunhap`
+--
+
+DROP TABLE IF EXISTS `phieunhap`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `phieunhap` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `ngaynhap` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `ghichu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `phieunhap_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `phieunhap`
+--
+
+LOCK TABLES `phieunhap` WRITE;
+/*!40000 ALTER TABLE `phieunhap` DISABLE KEYS */;
+/*!40000 ALTER TABLE `phieunhap` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tenrole` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tenrole` (`tenrole`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES (1,'Admin'),(2,'Customer');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sanpham`
+--
+
+DROP TABLE IF EXISTS `sanpham`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sanpham` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tensanpham` varchar(200) NOT NULL,
+  `giasanpham` int NOT NULL,
+  `hinhanhsanpham` varchar(255) DEFAULT NULL,
+  `motasanpham` varchar(10000) NOT NULL,
+  `idloaisanpham` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_loaisanpham` (`idloaisanpham`),
+  CONSTRAINT `fk_loaisanpham` FOREIGN KEY (`idloaisanpham`) REFERENCES `loaisanpham` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sanpham`
+--
+
+LOCK TABLES `sanpham` WRITE;
+/*!40000 ALTER TABLE `sanpham` DISABLE KEYS */;
+INSERT INTO `sanpham` VALUES (1,'Áo vest nam',300000,'/uploads/1761681914781-cry.jpg','áo vest cao cấp sang trọng, thời thượng, thích hợp mặc khi đi dự tiệc.',2),(2,'Áo sơ mi nữ công sở',259000,'https://cache.maydep.vn/wp-content/uploads/2021/12/ao-so-mi-cong-so.jpg','Áo sơ mi nữ kiểu dáng hiện đại, chất vải mềm mịn, phù hợp đi làm hoặc dạo phố.',2),(3,'Quần áo nam ống đứng cao cấp',200000,'/uploads/1761675387645-Ez Pepe.png','Thiết kế vừa vặn, gọn gàng, phù hợp đi làm và đi chơi',3),(4,'Quần short nữ lưng cao',249000,'https://cf.shopee.vn/file/vn-11134201-23020-26rpm3q1ajnv8f','Quần short chất kaki mềm, form lưng cao tôn dáng, dễ phối đồ.',3),(5,'Giày da nam',4999000,'https://product.hstatic.net/1000205116/product/dbf5f2af-7bc6-40a7-b15c-812758280a9c_7316b5dbc28b4dc1a967234db71aa90d_1024x1024.jpg','Giày da cổ thấp, đế bám tốt, kiểu dáng thời trang.',4),(6,'Dép sandal nữ quai chéo',289000,'https://img.lazcdn.com/g/shop/7ed830888215e78dda1652566083dbec.png_960x960q80.png_.webp','Sandal nữ đế cao, quai chéo da mềm, dễ phối đồ mùa hè.',4),(7,'Túi xách da nữ mini',3999000,'https://gubag.vn/wp-content/uploads/2024/02/tui-deo-cheo-nu-mini-day-xich-gb-tc21-4.webp','Túi da nữ mini đeo chéo, thiết kế nhỏ gọn, màu pastel dễ thương.',5),(8,'Mũ lưỡi trai nam',159000,'https://balooutlet.com/wp-content/uploads/2024/08/Untitled21.png','Mũ vải cotton, vành cong, in logo nổi, phong cách thể thao năng động.',5),(9,'Quần jogger thể thao',289000,'https://product.hstatic.net/200000472743/product/untitled_session18305_f37b4fa093424a38b2be884013e3dd83_master.jpg','Jogger co giãn, dây rút tiện lợi.',3),(10,'Quần legging nữ gym',199000,'https://salt.tikicdn.com/cache/280x280/ts/product/48/75/c4/3412904853871ef8df08549fcc15aa8e.jpg','Chất vải đàn hồi cao, ôm body.',3),(11,'Giày sneaker trắng',499000,'https://www.elleman.vn/wp-content/uploads/2020/03/26/174263/1-giay-sneaker-trang-elleman.jpg','Sneaker unisex, đế cao su bám tốt.',4),(12,'Giày cao gót nữ 5cm',429000,'https://file.hstatic.net/1000373795/file/6_kieu_giay_cao_got_nu_5cm_ma_cac_nang_nen_co_trong_tu_giay_6_1b6e4ab9debf4fcd81852b3d32485c37_grande.png','Giày da PU cao cấp, tôn dáng.',4),(13,'Dép sandal quai chéo',289000,'https://shondoshoes.com/cdn/shop/files/10_74e6830e-081e-45fc-9100-bcb007fc2239_1080x.jpg?v=1755006267','Sandal đế thấp, quai chéo mềm.',4),(14,'Giày lười nam da trơn',569000,'https://vinagiay.vn/wp-content/uploads/2024/06/27-3.png','Chất da bền, phù hợp đi làm.',4),(15,'Giày boot cổ ngắn nữ',629000,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP9WJaOH5W4lcO7_8aHZbnM_TENWHpptRxBQ&s','Boot da cổ ngắn, ấm áp mùa đông.',4),(16,'Túi xách da nữ',359000,'https://jmi.vn/wp-content/uploads/2023/03/JM2036.0-410x410.jpg','Túi đeo chéo nhỏ gọn, màu pastel.',5),(17,'Balo laptop unisex',479000,'https://product.hstatic.net/1000304213/product/-umo-centa-16inch-umo-xuong-may-balo-qua-tang-theo-yeu-cau-gia-re__19__22ff752d0eb74b9cae4124440fc7e74a_master.jpg','Balo chống nước, chứa laptop 15.6 inch.',5),(18,'Mũ cowboy nam',159000,'https://pos.nvncdn.com/efbd30-19981/ps/20221005_ffWRf5hjR74pHyLvJQMld1ac.jpg?v=1673551059','Mũ chất liệu da, ngầu.',5),(19,'Thắt lưng da bò nam',269000,'https://lavatino.com/wp-content/uploads/2020/01/That-lung-da-bo-cong-so-TINO-07-D02-VANG-4-1-1000x1000-1.jpg','Da bò thật, đầu khóa hợp kim.',5),(20,'Kính mát thời trang',229000,'https://bizweb.dktcdn.net/thumb/grande/100/463/551/products/kinh-nam-thoi-trang.jpg?v=1679657168927','Tròng chống UV400, phong cách retro.',5),(21,'Vòng tay handmade',129000,'https://bizweb.dktcdn.net/100/427/928/files/vong-tay-handmade-vintage-mo-ta-5.jpg?v=1645494389451','Vòng tay thủ công, dây da kết hợp hạt gỗ.',5),(22,'Khăn choàng len nữ',189000,'http://down-vn.img.susercontent.com/file/79a517f8a01858e1764b3db385fa24af','Khăn len mềm mịn, giữ ấm tốt, phối dễ dàng.',5),(23,'Áo sơ mi nam',350000,'http://dongphucbonmua.com/wp-content/uploads/2024/11/ao-so-mi-nam-dong-phuc-cong-so.jpg','Áo sơ mi trắng nam tính',2),(25,'Áo polo thể thao',320000,'/uploads/1762150968695-Heheboy.png','Áo polo nam chất liệu thun lạnh thoải mái',2),(26,'Áo sơ mi caro trẻ trung',370000,'http://product.hstatic.net/1000102419/product/mol513navy__10__f3e2d35b190445298de01d2f3d983f3e_grande.jpg','Áo sơ mi caro nam phong cách Hàn Quốc',2),(27,'Áo hoodie nỉ dày',480000,'http://dongphucgiadinh.com/wp-content/uploads/2022/10/ao-hoodie-ni-bong-am-ap-26.jpg','Áo hoodie nỉ ấm cho mùa đông',2),(28,'Áo khoác bomber',590000,'http://zizoou.com/cdn/shop/products/Ao-Bomber-1-Black-NCC1-11-1-ZiZoou-Store_4472x.jpg?v=1646556280','Áo khoác bomber cá tính cho nam nữ',2),(29,'Áo sơ mi tay ngắn',330000,'http://4menshop.com/images/thumbs/2020/07/ao-so-mi-tay-ngan-lung-in-asm013-mau-trang-15390.png','Áo sơ mi tay ngắn thoáng mát mùa hè',2),(30,'Áo khoác jean',650000,'/uploads/1762151285531-Cool Doge.gif','Áo khoác jean unisex thời trang',2),(31,'Áo sweater len mỏng',420000,'/uploads/1762151298252-angreydoggo.png','Áo sweater len cổ tròn, ấm áp vừa phải',2),(32,'Áo dài tay form rộng',310000,'http://dongphuchaianh.vn/wp-content/uploads/2022/07/ao-thun-tay-dai-nam-form-rong-co-lo.jpg','Áo dài tay form rộng phong cách streetwear',2),(33,'Áo sơ mi linen',390000,'/uploads/1762151308796-pepecool.png','Áo sơ mi linen thoáng mát, sang trọng',2),(34,'Áo khoác blazer',720000,'http://down-vn.img.susercontent.com/file/935f465bb497422ae45e4b219ad9bd77','Áo khoác blazer nam công sở',2),(35,'Áo phông graphic',280000,'/uploads/1762150953267-.png','Áo phông in hình độc đáo, trẻ trung',2),(36,'Áo thun trơn basic',220000,'http://aothun24h.vn/UserFile/Products/2024_08_27_11_35_54_72.jpg','Áo thun trơn form chuẩn unisex',2),(37,'Áo sơ mi đen sang trọng',360000,'/uploads/1762150938391-eri.webp','Áo sơ mi đen lịch lãm, dễ phối đồ',2),(38,'Áo Khoác nữ',3500000,'http://bizweb.dktcdn.net/thumb/1024x1024/100/119/564/products/ao-khoac-nu-han-quoc-4159.jpg?v=1708316429203','Thanh lịch và tao nhã',2),(39,'Áo len rộng nữ',2500000,'http://m.yodycdn.com/blog/ao-len-nu-form-rong-dang-dai-yodyvn4.jpg','ấm áp đơn giản, thanh lịch',2),(43,'Áo ba lỗ',12000,'/uploads/1762150892883-confusedwat.png','oke',1),(44,'Quần short',10000,'/uploads/1762150912989-goblok.png','ok',2),(46,'Vòng cổ handmade',120000,'/uploads/1762151226366-catrave.gif','đẹp lắm ',4);
+/*!40000 ALTER TABLE `sanpham` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sanpham_size`
+--
+
+DROP TABLE IF EXISTS `sanpham_size`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sanpham_size` (
+  `sanpham_id` int NOT NULL,
+  `size_id` int NOT NULL,
+  `soluong` int DEFAULT '0',
+  PRIMARY KEY (`sanpham_id`,`size_id`),
+  KEY `size_id` (`size_id`),
+  CONSTRAINT `sanpham_size_ibfk_1` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `sanpham_size_ibfk_2` FOREIGN KEY (`size_id`) REFERENCES `size` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sanpham_size`
+--
+
+LOCK TABLES `sanpham_size` WRITE;
+/*!40000 ALTER TABLE `sanpham_size` DISABLE KEYS */;
+INSERT INTO `sanpham_size` VALUES (1,1,10),(1,2,10),(1,3,10),(1,4,10),(2,1,5),(2,2,10),(2,3,5),(2,4,3),(3,1,10),(3,2,10),(3,3,10),(3,4,10),(4,1,10),(4,2,10),(4,3,10),(4,4,10),(5,5,10),(5,6,10),(5,7,10),(5,8,10),(5,9,10),(5,10,10),(6,5,10),(6,6,10),(6,7,10),(6,8,10),(6,9,10),(6,10,10),(9,1,10),(9,2,10),(9,3,10),(9,4,10),(10,1,10),(10,2,10),(10,3,10),(10,4,10),(11,5,10),(11,6,10),(11,7,10),(11,8,10),(11,9,10),(11,10,10),(12,5,9),(12,6,10),(12,7,10),(12,8,10),(12,9,10),(12,10,10),(13,5,10),(13,6,10),(13,7,10),(13,8,10),(13,9,10),(13,10,10),(14,5,10),(14,6,10),(14,7,10),(14,8,10),(14,9,10),(14,10,10),(15,5,10),(15,6,10),(15,7,10),(15,8,10),(15,9,10),(15,10,10),(21,11,3),(22,11,13),(23,1,10),(23,2,10),(23,3,10),(23,4,10),(25,2,5),(26,1,9),(26,2,10),(26,3,10),(26,4,10),(27,1,10),(27,2,10),(27,3,10),(27,4,10),(28,1,10),(28,2,10),(28,3,10),(28,4,10),(29,1,10),(29,2,10),(29,3,10),(29,4,10),(32,1,10),(32,2,10),(32,3,10),(32,4,10),(34,1,7),(34,2,10),(34,3,10),(34,4,10),(36,1,5),(36,2,9),(36,3,8),(36,4,10),(37,2,7),(37,4,10),(38,1,2),(38,2,10),(38,3,10),(38,4,10),(39,1,3),(39,2,10),(39,3,9),(39,4,8),(43,3,7),(44,2,7),(46,11,6);
+/*!40000 ALTER TABLE `sanpham_size` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `size`
+--
+
+DROP TABLE IF EXISTS `size`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `size` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tensize` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `size`
+--
+
+LOCK TABLES `size` WRITE;
+/*!40000 ALTER TABLE `size` DISABLE KEYS */;
+INSERT INTO `size` VALUES (1,'S'),(2,'M'),(3,'L'),(4,'XL'),(5,'37'),(6,'38'),(7,'39'),(8,'40'),(9,'41'),(10,'42'),(11,'Phụ Kiện');
+/*!40000 ALTER TABLE `size` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `temp_users`
+--
+
+DROP TABLE IF EXISTS `temp_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `temp_users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `otp_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `expire_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `temp_users`
+--
+
+LOCK TABLES `temp_users` WRITE;
+/*!40000 ALTER TABLE `temp_users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `temp_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `thanhtoan`
+--
+
+DROP TABLE IF EXISTS `thanhtoan`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thanhtoan` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `donhang_id` int NOT NULL,
+  `phuongthuc` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `trangthaithanhtoan` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'Chưa thanh toán',
+  `ngaythanhtoan` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_thanhtoan_donhang` (`donhang_id`),
+  CONSTRAINT `fk_thanhtoan_donhang` FOREIGN KEY (`donhang_id`) REFERENCES `donhang` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thanhtoan`
+--
+
+LOCK TABLES `thanhtoan` WRITE;
+/*!40000 ALTER TABLE `thanhtoan` DISABLE KEYS */;
+/*!40000 ALTER TABLE `thanhtoan` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tonkho`
+--
+
+DROP TABLE IF EXISTS `tonkho`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tonkho` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sanpham_id` int NOT NULL,
+  `size_id` int DEFAULT NULL,
+  `soluong_ton` int DEFAULT '0',
+  `ngaycapnhat` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `sanpham_id` (`sanpham_id`),
+  KEY `size_id` (`size_id`),
+  CONSTRAINT `tonkho_ibfk_1` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tonkho_ibfk_2` FOREIGN KEY (`size_id`) REFERENCES `size` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tonkho`
+--
+
+LOCK TABLES `tonkho` WRITE;
+/*!40000 ALTER TABLE `tonkho` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tonkho` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tendangnhap` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `matkhau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `hoten` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `sodienthoai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `diachi` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `hinhanh` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ngaytao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `role_id` int DEFAULT '2',
+  `fcm_token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `reset_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reset_token_expire` datetime DEFAULT NULL,
+  `banned` bit(1) DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `fk_user_role` (`role_id`),
+  CONSTRAINT `fk_user_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (9,'Phucdq03','$2y$10$/JlBr3IYYHNFqIxnr3El6Olx0NePRT2UCSm9X8JJFckiNbpyF4m92','Duong Quang Phuc','0393454486','emkujma@gmail.com','Ha Noi','http://10.0.2.2/FashionShop/uploads/1762071611_9.jpg','2025-10-22 05:37:35',2,'eM0UgM2mSVKxv4aZhEzvgc:APA91bHS7EACG41c9nuRZxt95cRkr5BPByY7RJfiU-qrxpFrgBr8Zv5Wtx3d-Xzg9qbgeyw6tJFaQkFi7xDBv8qEXdvAqK3k7AeulKrabmUOQd5yTEcAOqA',NULL,NULL,_binary '\0'),(10,'admin','$2y$10$bmUlGI9zSd41ovthjSTvzeIVzOiinqxUiGg1Sq.NmfwRzIvvQKoFi','admin','0909152966','phucdq2003@gmail.com','Hà Nội','/uploads/avatar-10-1761841358500.png','2025-10-22 07:12:17',1,NULL,NULL,NULL,_binary '\0'),(11,'Hatm2004','$2y$10$VvDYyaO0BeFpR5TuTjfk6uIonND.Yz2rfr0hKIXYTjiD/bgze5rIm','Tran Minh Ha','1234567890','ha123@gmail.com','Ho Chi Minh',NULL,'2025-10-22 17:17:00',2,NULL,NULL,NULL,_binary ''),(12,'Andt','$2y$10$373SvlXvdh4XKqy8epQ61OYJfKnmB6Il9iLJe4b8xyDPZAG/DZ70i','Do Thanh An','0909152906','Andt004@gmail.com','Ha Noi',NULL,'2025-10-22 17:22:52',2,'eM0UgM2mSVKxv4aZhEzvgc:APA91bHS7EACG41c9nuRZxt95cRkr5BPByY7RJfiU-qrxpFrgBr8Zv5Wtx3d-Xzg9qbgeyw6tJFaQkFi7xDBv8qEXdvAqK3k7AeulKrabmUOQd5yTEcAOqA',NULL,NULL,_binary '\0'),(14,'Anhmq','$2y$10$lj1UYa22hpeAI4zHBGVXfOlPtEXfv7MaMuRg73u/lVh0ZBE1qyEBe','Mai Quynh Anh','0908156788','Anhmq@gmail.com','Ho Chi Minh',NULL,'2025-10-22 18:04:02',2,'eM0UgM2mSVKxv4aZhEzvgc:APA91bHS7EACG41c9nuRZxt95cRkr5BPByY7RJfiU-qrxpFrgBr8Zv5Wtx3d-Xzg9qbgeyw6tJFaQkFi7xDBv8qEXdvAqK3k7AeulKrabmUOQd5yTEcAOqA',NULL,NULL,_binary '\0'),(15,'phucdqhe173065','$2y$10$S/aSyqnc1PcGSPdedwznWOI.qbgxRlc2uA3W8P4pT8pa8a1Liadei','Phuc Duong','0909152969','phucdqhe173065@fpt.edu.vn','Ha Noi','uploads/avatar_15_1762151993.jpg','2025-10-23 13:38:28',2,'eM0UgM2mSVKxv4aZhEzvgc:APA91bHS7EACG41c9nuRZxt95cRkr5BPByY7RJfiU-qrxpFrgBr8Zv5Wtx3d-Xzg9qbgeyw6tJFaQkFi7xDBv8qEXdvAqK3k7AeulKrabmUOQd5yTEcAOqA',NULL,NULL,_binary '\0'),(16,'phuc2003','$2b$10$pHgOcb/PPUbRBa187OTWkelCtlXzzGheLvNma4xTcH1r/DDprNaeu','Phuc','0909875646','kabinduong003@gmail.com','Hà Nội','/uploads/avatar-16-1761910233849.gif','2025-10-27 19:19:21',1,NULL,NULL,NULL,_binary '\0');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-11-07  0:43:02
